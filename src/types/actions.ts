@@ -1,13 +1,19 @@
-import { ImageItem, TextItem } from "./items"
+import { Item } from "./items"
 
-export type InsertTextAction = {
-  type: "INSERT_TEXT"
-  payload: TextItem
+export type InsertItemAction = {
+  type: "INSERT_ITEM"
+  payload: Item
 }
 
-export type InsertImageAction = {
-  type: "INSERT_IMAGE"
-  payload: ImageItem
+export type DeleteItemAction = {
+  type: "DELETE_ITEM"
+  payload: {
+    id: string
+  }
 }
 
-export type Action = InsertTextAction | InsertImageAction
+export type DeleteAllItemsAction = {
+  type: "DELETE_ALL_ITEMS"
+}
+
+export type Action = InsertItemAction | DeleteItemAction | DeleteAllItemsAction

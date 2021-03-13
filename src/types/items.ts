@@ -1,10 +1,5 @@
 import * as z from "zod"
 
-export enum ItemEnum {
-  IMAGE = "IMAGE",
-  TEXT = "TEXT",
-}
-
 export const widthHeightTopLeftP = z
   .object({
     width: z.number(),
@@ -36,7 +31,7 @@ export const itemBaseP = z
 export type ItemBase = z.infer<typeof itemBaseP>
 
 export const imageItemP = itemBaseP.extend({
-  type: z.literal(ItemEnum.IMAGE),
+  type: z.literal("IMAGE"),
   src: z.string().url(),
   naturalWidth: z.number(),
   naturalHeight: z.number(),
@@ -45,7 +40,7 @@ export const imageItemP = itemBaseP.extend({
 export type ImageItem = z.infer<typeof imageItemP>
 
 export const textItemP = itemBaseP.extend({
-  type: z.literal(ItemEnum.TEXT),
+  type: z.literal("TEXT"),
   text: z.string(),
 })
 

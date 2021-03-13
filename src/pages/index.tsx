@@ -1,24 +1,14 @@
-import { useMachine } from "@xstate/react"
-import Head from "next/head"
 import { Fragment } from "react"
-import itemsMachine from "../machines/items"
+import Create from "../components/create"
+import Explore from "../components/explore"
 
-export default function Home() {
-  const [{ context }, send] = useMachine(itemsMachine)
-  const insertItem = () => {
-    send({
-      type: "INSERT_ITEM",
-      item: {
-        id: "foo",
-      },
-    })
-  }
+const IndexPage = () => {
   return (
     <Fragment>
-      <button onClick={insertItem}>insert item</button>
-      <button onClick={() => void send("UNDO")}>undo</button>
-      <button onClick={() => void send("REDO")}>redo</button>
-      <pre>{JSON.stringify(context, null, 2)}</pre>
+      <Explore />
+      <Create />
     </Fragment>
   )
 }
+
+export default IndexPage
