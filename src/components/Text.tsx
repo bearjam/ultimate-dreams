@@ -1,5 +1,5 @@
 import React from "react"
-import { TextItem } from "../../types/items"
+import { TextItem } from "../types/items"
 
 const Text = (props: TextItem) => {
   return (

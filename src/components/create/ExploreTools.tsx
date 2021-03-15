@@ -1,9 +1,6 @@
 import React, { Fragment } from "react"
+import ImageLibrary from "./ImageLibrary"
 import TextForm from "./TextForm"
-
-const ImageLibrary = () => {
-  return null
-}
 
 const ExploreTools = () => {
   return (

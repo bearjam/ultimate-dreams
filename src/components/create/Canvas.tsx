@@ -3,8 +3,8 @@ import { toArray } from "fp-ts/lib/Record"
 import { snd } from "fp-ts/lib/Tuple"
 import { useStore } from "../../lib/store"
 import { ImageItem, TextItem } from "../../types/items"
-import Image from "./Image"
-import Text from "./Text"
+import Image from "../Image"
+import Text from "../Text"
 
 const Canvas = () => {
   const { items, mode, dispatch } = useStore(({ state, dispatch }) => ({
@@ -14,6 +14,9 @@ const Canvas = () => {
   }))
   return (
     <div className="fixed w-full h-full bg-indigo-100">
+      <article>
+        <h2>Canvas</h2>
+      </article>
       {items.map(
         (item) =>
           ({

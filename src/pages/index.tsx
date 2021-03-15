@@ -1,13 +1,19 @@
-import { Fragment } from "react"
-import Create from "../components/create"
-import Explore from "../components/explore"
+import Link from "../components/Link"
 
 const IndexPage = () => {
   return (
-    <Fragment>
-      <Explore />
-      <Create />
-    </Fragment>
+    <article>
+      <Link href="/explore">
+        <a>
+          <h2>Explore</h2>
+        </a>
+      </Link>
+      <Link href="/create">
+        <a>
+          <h2>Create</h2>
+        </a>
+      </Link>
+    </article>
   )
 }
 

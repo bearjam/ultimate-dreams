@@ -4,13 +4,15 @@ import * as z from "zod"
 import { api } from "../../../lib/unsplash"
 
 const reqP = z.object({
-  query: z.string().nonempty(),
+  slug: z.string().nonempty(),
 })
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { query } = reqP.parse(req.query)
-    const { response } = await api.search.getPhotos({ query })
+    const { slug } = reqP.parse(req.query)
+    const { response } = await api.topics.getPhotos({
+      topicIdOrSlug: slug,
+    })
     if (!response) throw new Error("No response")
     res.json(response)
   } catch (e) {
