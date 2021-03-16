@@ -1,14 +1,14 @@
 import React, { Fragment } from "react"
-import ImageLibrary from "./ImageLibrary"
+import ImageBin from "./ImageBin"
 import TextForm from "./TextForm"
 
-const ExploreTools = () => {
+const AssetTools = () => {
   return (
     <Fragment>
       <TextForm className="border-red-500 border p-4 m-4" />
-      <ImageLibrary />
+      <ImageBin />
     </Fragment>
   )
 }
 
-export default ExploreTools
+export default AssetTools

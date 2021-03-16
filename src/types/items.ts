@@ -1,4 +1,6 @@
 import * as z from "zod"
+import UnsplashPhoto from "../components/UnsplashPhoto"
+import { UnsplashPhotoT } from "./unsplash"
 
 export const widthHeightTopLeftP = z
   .object({
@@ -48,4 +50,12 @@ export type TextItem = z.infer<typeof textItemP>
 
 export const itemP = z.union([imageItemP, textItemP])
 
-export type Item = z.infer<typeof itemP>
+export const unsplashPhotoItemP = itemBaseP.omit({ height: true }).extend({
+  type: z.literal("UNSPLASH_PHOTO"),
+})
+
+export type UnsplashPhotoItem = z.infer<typeof unsplashPhotoItemP> & {
+  photo: UnsplashPhotoT
+}
+
+export type Item = z.infer<typeof itemP> | UnsplashPhotoItem

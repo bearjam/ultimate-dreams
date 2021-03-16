@@ -5,3 +5,10 @@
 article {
   @apply prose lg:prose-xl;
 }
+
+/* @screen sm {
+  html {
+    margin-left: calc(100vw - 100%);
+    margin-right: 0;
+  }
+} */

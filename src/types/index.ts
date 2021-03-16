@@ -6,7 +6,6 @@ type Mode = z.infer<typeof modeP>
 
 export type State = {
   mode: Mode
-  items: {
-    [k: string]: Item
-  }
+  items: Item[]
+  selectedItems: Item[]
 }

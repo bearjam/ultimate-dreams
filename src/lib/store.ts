@@ -1,26 +1,40 @@
 import { undoableReducer } from "@bearjam/tom"
-import produce from "immer"
+import { filter } from "fp-ts/lib/Array"
 import create from "zustand"
 import { State } from "../types"
 import { Action } from "../types/actions"
+import { Item } from "../types/items"
 
 const initialState: State = {
   mode: "SELECT",
-  items: {},
+  items: [],
+  selectedItems: [],
 }
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "INSERT_ITEM":
-      return produce(state, (draft) => {
-        draft.items[action.payload.id] = action.payload
-      })
+      return {
+        ...state,
+        items: [...state.items, action.payload],
+        selectedItems: [action.payload],
+      }
     case "DELETE_ITEM":
-      return produce(state, (draft) => {
-        delete draft.items[action.payload.id]
-      })
+      return {
+        ...state,
+        selectedItems: filter<Item>((item) => item.id !== action.payload.id)(
+          state.selectedItems
+        ),
+        items: filter<Item>((item) => item.id !== action.payload.id)(
+          state.items
+        ),
+      }
     case "DELETE_ALL_ITEMS":
-      return { items: {}, mode: state.mode }
+      return {
+        ...state,
+        items: [],
+        selectedItems: [],
+      }
     default:
       return state
   }
