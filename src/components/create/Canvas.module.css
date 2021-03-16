@@ -1,0 +1,6 @@
+.root {
+  @apply absolute top-0 left-0;
+  @apply w-screen h-screen;
+  @apply bg-indigo-300;
+  z-index: -10;
+}

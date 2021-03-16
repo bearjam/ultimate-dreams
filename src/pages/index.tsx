@@ -1,20 +1,12 @@
-import Link from "../components/Link"
+import { useRouter } from "next/router"
+import { useEffect } from "react"
 
 const IndexPage = () => {
-  return (
-    <article>
-      <Link href="/explore">
-        <a>
-          <h2>Explore</h2>
-        </a>
-      </Link>
-      <Link href="/create">
-        <a>
-          <h2>Create</h2>
-        </a>
-      </Link>
-    </article>
-  )
+  const router = useRouter()
+  useEffect(() => {
+    router.push("/create")
+  }, [])
+  return <></>
 }
 
 export default IndexPage

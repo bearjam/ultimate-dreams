@@ -2,20 +2,20 @@ import { filter, map } from "fp-ts/lib/Array"
 import { pipe } from "fp-ts/lib/function"
 import React from "react"
 import useSWR from "swr"
-import { useStore } from "../../lib/store"
+import { useCanvasStore } from "../../stores/canvas"
 import { fetcher, getWidth } from "../../lib/util"
 import { UnsplashPhotoT } from "../../types/unsplash"
 import UnsplashPhoto from "../UnsplashPhoto"
 import shallow from "zustand/shallow"
-import { insertUnsplashPhoto } from "../../lib/actions"
+import { usePhotoStore } from "../../stores/photos"
 
 type Props = {
   topic: string
 }
 
 const TopicImages = ({ topic }: Props) => {
-  const [ids, dispatch] = useStore(
-    (store) => [store.state.items.map((x) => x.id), store.dispatch],
+  const [ids, dispatch] = usePhotoStore(
+    (store) => [store.state.photos.map((p) => p.id), store.dispatch],
     shallow
   )
   const { data, error } = useSWR<{ results: UnsplashPhotoT[]; total: number }>(
@@ -34,14 +34,7 @@ const TopicImages = ({ topic }: Props) => {
           <div
             key={result.id}
             className="w-64 p-4"
-            onClick={() =>
-              dispatch(
-                insertUnsplashPhoto({
-                  photo: result,
-                  width: getWidth(),
-                })
-              )
-            }
+            onClick={() => dispatch({ type: "INSERT", payload: result })}
           >
             <UnsplashPhoto photo={result} />
           </div>

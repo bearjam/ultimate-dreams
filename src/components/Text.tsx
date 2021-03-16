@@ -1,7 +1,7 @@
 import React from "react"
-import { TextItem } from "../types/items"
+import { CanvasTextItem } from "../types/canvas"
 
-const Text = (props: TextItem) => {
+const Text = (props: CanvasTextItem) => {
   return (
     <div>
       <pre>{JSON.stringify(props, null, 2)}</pre>

@@ -1,7 +1,7 @@
 import React, { HTMLProps, useState } from "react"
 import { useForm } from "react-hook-form"
-import { insertTextAction } from "../../lib/actions"
-import { useStore } from "../../lib/store"
+import { insertCanvasTextItemAction } from "../../stores/canvas/actions"
+import { useCanvasStore } from "../../stores/canvas"
 import Submit from "../inputs/Submit"
 import TextInput from "../inputs/TextInput"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -20,11 +20,11 @@ const TextForm = (props: Props) => {
     },
     resolver: zodResolver(schema),
   })
-  const dispatch = useStore((store) => store.dispatch)
+  const dispatch = useCanvasStore((store) => store.dispatch)
 
   async function onSubmit({ text }: { text: string }) {
     console.log(text)
-    dispatch(insertTextAction({ text }))
+    dispatch(insertCanvasTextItemAction({ text }))
     reset()
   }
 

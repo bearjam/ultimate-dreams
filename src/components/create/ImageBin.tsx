@@ -1,17 +1,13 @@
-import { filter, map } from "fp-ts/lib/Array"
-import { pipe } from "fp-ts/lib/function"
-import { toArray } from "fp-ts/lib/Record"
-import { snd } from "fp-ts/lib/Tuple"
 import React from "react"
-import { useStore } from "../../lib/store"
-import { Item } from "../../types/items"
+import { usePhotoStore } from "../../stores/photos"
+import UnsplashPhoto from "../UnsplashPhoto"
 
 const ImageBin = () => {
-  const images = useStore((store) => store.state.items)
+  const photos = usePhotoStore((store) => store.state.photos)
   return (
     <div>
-      {images.map((image) => (
-        <pre>{JSON.stringify(image, null, 2)}</pre>
+      {photos.map((photo) => (
+        <UnsplashPhoto key={photo.id} photo={photo} />
       ))}
     </div>
   )

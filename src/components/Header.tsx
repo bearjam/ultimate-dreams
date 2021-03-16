@@ -10,7 +10,6 @@ type Link = {
 }
 
 const links: Link[] = [
-  { href: "/", label: "home" },
   { href: "/create", label: "create" },
   { href: "/explore", label: "explore" },
 ]
@@ -19,7 +18,7 @@ const Header = () => {
   const router = useRouter()
 
   return (
-    <nav className="bg-yellow-600 flex justify-center">
+    <nav className="bg-yellow-600 flex justify-center items-center h-16">
       {links.map(({ href, label }) => {
         const active =
           href === "/"
