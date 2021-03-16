@@ -2,12 +2,11 @@ import { filter, map } from "fp-ts/lib/Array"
 import { pipe } from "fp-ts/lib/function"
 import React from "react"
 import useSWR from "swr"
-import { useCanvasStore } from "../../stores/canvas"
-import { fetcher, getWidth } from "../../lib/util"
+import shallow from "zustand/shallow"
+import { fetcher } from "../../lib/util"
+import { usePhotoStore } from "../../stores/photos"
 import { UnsplashPhotoT } from "../../types/unsplash"
 import UnsplashPhoto from "../UnsplashPhoto"
-import shallow from "zustand/shallow"
-import { usePhotoStore } from "../../stores/photos"
 
 type Props = {
   topic: string

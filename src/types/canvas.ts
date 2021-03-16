@@ -24,7 +24,7 @@ export type CanvasTextItem = CanvasItemBase & {
 
 export type CanvasItem = CanvasImageItem | CanvasTextItem
 
-export type CanvasMode = "SELECT" | "MOVE" | "RESIZE" | "ROTATE" | "CROP"
+export type CanvasMode = "SELECT" | "MOVE" | "SCALE" | "ROTATE" | "CROP"
 
 export type CanvasState = {
   mode: CanvasMode
@@ -48,7 +48,13 @@ export type DeleteAllCanvasItemsAction = {
   type: "DELETE_ALL"
 }
 
+export type SetModeAction = {
+  type: "SET_MODE"
+  payload: CanvasMode
+}
+
 export type CanvasAction =
   | InsertCanvasItemAction
   | DeleteCanvasItemAction
   | DeleteAllCanvasItemsAction
+  | SetModeAction

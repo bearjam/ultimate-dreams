@@ -11,6 +11,11 @@ const initialState: CanvasState = {
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   switch (action.type) {
+    case "SET_MODE":
+      return {
+        ...state,
+        mode: action.payload,
+      }
     case "INSERT":
       return {
         ...state,
