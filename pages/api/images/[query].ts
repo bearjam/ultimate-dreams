@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { serializeError } from "serialize-error"
 import * as z from "zod"
-import { api } from "../../../lib/unsplash"
+import { api } from "../../../src/lib/unsplash"
 
 const reqP = z.object({
   query: z.string().nonempty(),

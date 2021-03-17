@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { serializeError } from "serialize-error"
-import { api } from "../../../lib/unsplash"
+import { api } from "../../../src/lib/unsplash"
 const topics = [
   {
     title: "Nature",
