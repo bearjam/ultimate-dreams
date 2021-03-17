@@ -1,1 +1,1 @@
-export { default } from "../../src/components/explore"
+export { default } from "components/explore"

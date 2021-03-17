@@ -1,34 +1,18 @@
+import Link from "components/Link"
 import React from "react"
-import useSWR from "swr"
-import Link from "../../components/Link"
-import UnsplashPhoto from "../../components/UnsplashPhoto"
-import { fetcher } from "../../lib/util"
-import { UnsplashTopic } from "../../types/unsplash"
 
-const Explore = () => {
-  const { data, error } = useSWR<{ results: UnsplashTopic[]; total: number }>(
-    `/api/topics`,
-    fetcher
-  )
-
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
-
+const IndexPage = () => {
   return (
-    <div>
-      <h2>topics</h2>
-      {data.results.map((topic) => (
-        <Link key={topic.id} href={`/explore/${topic.slug}`}>
-          <a>
-            <div>
-              <h2>{topic.title}</h2>
-              <UnsplashPhoto photo={topic.cover_photo!} />
-            </div>
-          </a>
-        </Link>
-      ))}
-    </div>
+    <article>
+      <h2>exploreIndex</h2>
+      <Link href="/explore/topics">
+        <a>Topics</a>
+      </Link>
+      <Link href="/explore/search">
+        <a>Search</a>
+      </Link>
+    </article>
   )
 }
 
-export default Explore
+export default IndexPage

@@ -1,7 +1,7 @@
 import { AppPropsType } from "next/dist/next-server/lib/utils"
 import React from "react"
 import { Flipper } from "react-flip-toolkit"
-import Header from "../src/components/Header"
+import Header from "components/Header"
 import "./_app.css"
 
 function MyApp({ Component, pageProps, router }: AppPropsType) {

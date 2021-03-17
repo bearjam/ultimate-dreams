@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
 import React from "react"
-import TopicImages from "../../src/components/explore/TopicImages"
+import TopicImages from "../TopicImages"
 
 const ExploreCollectionPage = () => {
   const router = useRouter()

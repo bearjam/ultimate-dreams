@@ -3,10 +3,10 @@ import { pipe } from "fp-ts/lib/function"
 import React from "react"
 import useSWR from "swr"
 import shallow from "zustand/shallow"
-import { fetcher } from "../../lib/util"
-import { usePhotoStore } from "../../stores/photos"
-import { UnsplashPhotoT } from "../../types/unsplash"
-import UnsplashPhoto from "../UnsplashPhoto"
+import { fetcher } from "lib/util"
+import { usePhotoStore } from "stores/photos"
+import { UnsplashPhotoT } from "types/unsplash"
+import UnsplashPhoto from "components/UnsplashPhoto"
 
 type Props = {
   topic: string
