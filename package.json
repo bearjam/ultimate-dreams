@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@bearjam/tom": "^0.2.4",
+    "@headlessui/react": "https://gitpkg.now.sh/tailwindlabs/headlessui/packages/@headlessui-react?develop",
     "@hookform/resolvers": "1.3.0",
     "@tailwindcss/typography": "^0.4.0",
     "@types/tailwindcss": "^2.0.0",
