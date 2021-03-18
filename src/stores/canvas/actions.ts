@@ -1,5 +1,9 @@
 import { v4 as uuid } from "uuid"
-import { CanvasTextItem, InsertCanvasItemAction } from "../../types/canvas"
+import {
+  CanvasImageItem,
+  CanvasTextItem,
+  InsertCanvasItemAction,
+} from "../../types/canvas"
 
 export const insertCanvasTextItemAction = ({
   id = uuid(),
@@ -14,6 +18,29 @@ export const insertCanvasTextItemAction = ({
     type: "TEXT",
     id,
     text,
+    width,
+    height,
+    top,
+    left,
+  },
+})
+
+type InsertCanvasImageItemActionArgsT = Partial<
+  Pick<CanvasImageItem, "top" | "left">
+> &
+  Omit<CanvasImageItem, "type" | "top" | "left">
+
+export const insertCanvasImageItemAction = ({
+  id,
+  width,
+  height,
+  top = 50,
+  left = 50,
+}: InsertCanvasImageItemActionArgsT): InsertCanvasItemAction => ({
+  type: "INSERT",
+  payload: {
+    type: "IMAGE",
+    id,
     width,
     height,
     top,

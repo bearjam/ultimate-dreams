@@ -1,4 +1,5 @@
 import { parseUrl } from "query-string"
+import { UnsplashPhotoT } from "types/unsplash"
 import * as z from "zod"
 
 const { abs, min } = Math
@@ -28,4 +29,9 @@ export const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 export const getWidth = () => {
   return !window ? 600 : min(window.innerWidth, 1600)
+}
+
+export const getWidthHeight = (photo: UnsplashPhotoT) => {
+  let width = getWidth()
+  return { width, height: (photo.height / photo.width) * width }
 }
