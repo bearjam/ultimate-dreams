@@ -1,22 +1,23 @@
 import { map } from "fp-ts/lib/Array"
 import { pipe } from "fp-ts/lib/function"
+import { getWidthHeight } from "lib/util"
 import React, { HTMLProps } from "react"
+import { insertCanvasImageItemAction } from "stores/canvas/actions"
 import { useCanvasStore } from "../../stores/canvas"
 import { usePhotoStore } from "../../stores/photos"
 import Link from "../Link"
 import UnsplashPhoto from "../UnsplashPhoto"
 
-type Props = HTMLProps<HTMLDivElement>
+type Props = HTMLProps<HTMLDivElement> & {
+  onDispatch?: () => void
+}
 
-const PhotoBin = (props: Props) => {
+const PhotoBin = ({ onDispatch = () => {}, ...props }: Props) => {
   const [photos, dispatchPhoto] = usePhotoStore((store) => [
     store.state.photos,
     store.dispatch,
   ])
-  const [canvasItems, dispatchCanvas] = useCanvasStore((store) => [
-    store.state.items,
-    store.dispatch,
-  ])
+  const dispatchCanvas = useCanvasStore((store) => store.dispatch)
 
   return (
     <div {...props}>
@@ -33,10 +34,28 @@ const PhotoBin = (props: Props) => {
           </Link>
         </article>
       ) : (
-        pipe(
-          photos,
-          map((photo) => <UnsplashPhoto key={photo.id} photo={photo} />)
-        )
+        <article>
+          <h2>Select any image to send to canvas</h2>
+          {pipe(
+            photos,
+            map((photo) => (
+              <UnsplashPhoto
+                key={photo.id}
+                photo={photo}
+                onClick={() => {
+                  dispatchCanvas(
+                    insertCanvasImageItemAction({
+                      id: photo.id,
+                      src: photo.urls.regular,
+                      ...getWidthHeight(photo),
+                    })
+                  )
+                  onDispatch()
+                }}
+              />
+            ))
+          )}
+        </article>
       )}
     </div>
   )

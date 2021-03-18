@@ -1,19 +1,13 @@
 import clsx from "clsx"
-import { Fragment, HTMLProps, useState } from "react"
+import SvgCloseIcon from "icons/SvgCloseIcon"
+import { HTMLProps, useState } from "react"
+import SvgPlusIcon from "../../icons/SvgPlusIcon"
 import { useCanvasStore } from "../../stores/canvas"
-import { CanvasTextItem } from "../../types/canvas"
+import { CanvasImageItem, CanvasTextItem } from "../../types/canvas"
 import Text from "../Text"
 import css from "./Canvas.module.css"
-import {
-  animated,
-  to,
-  useSpring,
-  useSprings,
-  useTransition,
-} from "react-spring"
+import CanvasImage from "./CanvasImage"
 import PhotoBin from "./PhotoBin"
-import SvgPlusIcon from "../../icons/SvgPlusIcon"
-import SvgDeleteIcon from "../../icons/SvgDeleteIcon"
 
 const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
   const { items, mode, dispatch } = useCanvasStore(
@@ -34,16 +28,16 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
         </button>
       ) : (
         <div className={css["photo-bin-popup"]}>
-          <PhotoBin />
+          <PhotoBin onDispatch={closePhotoBin} />
           <button aria-label="close" onClick={closePhotoBin}>
-            <SvgDeleteIcon />
+            <SvgCloseIcon />
           </button>
         </div>
       )}
       {items.map(
         (item) =>
           ({
-            IMAGE: <div>image todo</div>,
+            IMAGE: <CanvasImage key={item.id} {...(item as CanvasImageItem)} />,
             TEXT: <Text key={item.id} {...(item as CanvasTextItem)} />,
           }[item.type])
       )}

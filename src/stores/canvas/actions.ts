@@ -32,6 +32,7 @@ type InsertCanvasImageItemActionArgsT = Partial<
 
 export const insertCanvasImageItemAction = ({
   id,
+  src,
   width,
   height,
   top = 50,
@@ -41,6 +42,7 @@ export const insertCanvasImageItemAction = ({
   payload: {
     type: "IMAGE",
     id,
+    src,
     width,
     height,
     top,

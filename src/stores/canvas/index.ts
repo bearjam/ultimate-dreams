@@ -1,6 +1,7 @@
 import { withUndoableReducer } from "@bearjam/tom"
 import { filter } from "fp-ts/lib/Array"
 import create from "zustand"
+import { persist } from "zustand/middleware"
 import { CanvasAction, CanvasItem, CanvasState } from "../../types/canvas"
 
 const initialState: CanvasState = {
@@ -17,11 +18,13 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         mode: action.payload,
       }
     case "INSERT":
-      return {
+      const next = {
         ...state,
         items: [...state.items, action.payload],
         selectedItems: [action.payload],
       }
+      console.log(next)
+      return next
     case "DELETE":
       return {
         ...state,
@@ -43,4 +46,6 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   }
 }
 
-export const useCanvasStore = create(withUndoableReducer(reducer, initialState))
+export const useCanvasStore = create(
+  persist(withUndoableReducer(reducer, initialState), { name: "canvasStore" })
+)

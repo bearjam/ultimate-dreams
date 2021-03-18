@@ -15,6 +15,7 @@ export type CanvasItemBase = WidthHeightTopLeft & {
 
 export type CanvasImageItem = CanvasItemBase & {
   type: "IMAGE"
+  src: string
 }
 
 export type CanvasTextItem = CanvasItemBase & {
