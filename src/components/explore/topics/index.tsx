@@ -7,7 +7,7 @@ import { UnsplashTopic } from "types/unsplash"
 
 const Explore = () => {
   const { data, error } = useSWR<{ results: UnsplashTopic[]; total: number }>(
-    `/api/topics`,
+    `/api/unsplash/topics`,
     fetcher
   )
 
