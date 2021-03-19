@@ -13,7 +13,7 @@ const initialState: CanvasState = {
     x: 0,
     y: 0,
   },
-  zoom: 0.2,
+  zoom: 0.1,
 }
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
@@ -30,10 +30,13 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         draft.pan.y += action.payload.dy
       })
     case "UPDATE_ZOOM":
-      return {
+      console.log(state, "before")
+      const next = {
         ...state,
         zoom: action.payload.zoom,
       }
+      console.log(next, "after")
+      return next
     case "INSERT":
       return {
         ...state,

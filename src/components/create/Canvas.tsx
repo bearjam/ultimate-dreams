@@ -63,28 +63,36 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
 
   const mainRef = useRef<HTMLDivElement | null>(null)
 
-  const centerMain = () => {
-    if (!mainRef.current) return
-    const main = mainRef.current
-    const { left, right, top, bottom, x, y } = main.getBoundingClientRect()
-    const rect = main.getBoundingClientRect()
-    const targetX = window.innerWidth / 2
-    const actualX = x + (abs(right) - abs(left)) / 2
-    const dx = targetX - actualX
-    const targetY = window.innerHeight / 2
-    const actualY = y + (abs(bottom) - abs(top)) / 2
-    const dy = targetY - actualY
-    console.log(rect)
-    console.log(`pan: ${pan.x},${pan.y}\ndx,dy: ${dx},${dy}`)
-    dispatch({ type: "UPDATE_PAN", payload: { dx, dy } })
+  const getCenter = () => {
+    if (typeof window === "undefined") return [0, 0]
+    return [window.innerWidth / 2, window.innerHeight / 2]
   }
 
-  useEffect(() => {
-    setTimeout(centerMain, 1000)
-  }, [])
+  const containerClickHandler = () => {
+    const main = mainRef.current
+    if (!main) return
+    const rect = main.getBoundingClientRect()
+    console.log(rect)
+    const [targetX, targetY] = getCenter()
+    const currentX = rect.left + abs(rect.left - rect.right) / 2
+    const currentY = rect.top + abs(rect.top - rect.bottom) / 2
+    dispatch({
+      type: "UPDATE_PAN",
+      payload: {
+        dx: -1 * (currentX - targetX),
+        dy: -1 * (currentY - targetY),
+      },
+    })
+  }
+
+  // useEffect(() => void logRect(), [pan])
 
   return (
-    <div className={clsx(css.container, className)} {...props}>
+    <div
+      className={clsx(css.container, className)}
+      onClick={containerClickHandler}
+      {...props}
+    >
       {!showPhotoBin ? (
         <button onClick={openPhotoBin}>
           <SvgPlusIcon />
@@ -103,11 +111,7 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
           width: 4000,
           height: 4000,
           scale: to([z], (z) => (z ? zoom - z / SCALE_QUOTIENT : zoom)),
-          x: to([x], (x) => {
-            const foo = pan.x + x
-            // console.log(foo)
-            return foo
-          }),
+          x: to([x], (x) => pan.x + x),
           y: to([y], (y) => pan.y + y),
         }}
         {...bind()}

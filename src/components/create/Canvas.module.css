@@ -23,4 +23,6 @@
 
 .main {
   @apply bg-yellow-300;
+  @apply touch-action-none select-none;
+  transform-origin: "50% 50%";
 }
