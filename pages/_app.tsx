@@ -1,15 +1,24 @@
-import { AppPropsType } from "next/dist/next-server/lib/utils"
+import {
+  AppPropsType,
+  NextComponentType,
+} from "next/dist/next-server/lib/utils"
 import React from "react"
-import { Flipper } from "react-flip-toolkit"
-import Header from "components/Header"
+import DefaultLayout from "src/layouts"
+import { LayoutType } from "types/layouts"
 import "./_app.css"
 
-function MyApp({ Component, pageProps, router }: AppPropsType) {
+function MyApp({
+  Component,
+  pageProps,
+}: Omit<AppPropsType, "Component"> & {
+  Component: NextComponentType & { Layout?: LayoutType }
+}) {
+  const Layout = Component?.Layout ?? DefaultLayout
+
   return (
-    <Flipper flipKey={router.pathname}>
-      <Header />
+    <Layout>
       <Component {...pageProps} />
-    </Flipper>
+    </Layout>
   )
 }
 

@@ -27,10 +27,17 @@ export type CanvasItem = CanvasImageItem | CanvasTextItem
 
 export type CanvasMode = "SELECT" | "MOVE" | "SCALE" | "ROTATE" | "CROP"
 
+export type XYCoord = {
+  x: number
+  y: number
+}
+
 export type CanvasState = {
   mode: CanvasMode
   items: CanvasItem[]
   selectedItems: CanvasItem[]
+  pan: XYCoord
+  zoom: number
 }
 
 export type InsertCanvasItemAction = {
@@ -54,8 +61,25 @@ export type SetModeAction = {
   payload: CanvasMode
 }
 
+export type UpdatePanAction = {
+  type: "UPDATE_PAN"
+  payload: {
+    dx: number
+    dy: number
+  }
+}
+
+export type UpdateZoomAction = {
+  type: "UPDATE_ZOOM"
+  payload: {
+    zoom: number
+  }
+}
+
 export type CanvasAction =
   | InsertCanvasItemAction
   | DeleteCanvasItemAction
   | DeleteAllCanvasItemsAction
   | SetModeAction
+  | UpdatePanAction
+  | UpdateZoomAction

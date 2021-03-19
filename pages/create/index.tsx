@@ -1,1 +1,2 @@
-export { default } from "components/create"
+import dynamic from "next/dynamic"
+export default dynamic(() => import("components/create"))

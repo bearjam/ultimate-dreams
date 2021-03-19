@@ -1,6 +1,7 @@
 import { withReducer } from "@bearjam/tom"
 import { filter } from "fp-ts/lib/Array"
 import create from "zustand"
+import { persist } from "zustand/middleware"
 import { PhotoStoreAction, PhotoStoreState } from "../../types/photos"
 import { UnsplashPhotoT } from "../../types/unsplash"
 
@@ -35,4 +36,6 @@ const reducer = (
   }
 }
 
-export const usePhotoStore = create(withReducer(reducer, initialState))
+export const usePhotoStore = create(
+  persist(withReducer(reducer, initialState), { name: "photoStore" })
+)
