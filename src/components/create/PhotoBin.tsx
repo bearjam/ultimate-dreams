@@ -1,5 +1,5 @@
-import { map } from "fp-ts/lib/Array"
-import { pipe } from "fp-ts/lib/function"
+import { pipe } from "fp-ts/function"
+import { map } from "fp-ts/ReadonlyArray"
 import { getWidthHeight } from "lib/util"
 import React, { HTMLProps } from "react"
 import { insertCanvasImageItemAction } from "stores/canvas/actions"

@@ -1,15 +1,15 @@
-import React from "react"
+import React, { Fragment } from "react"
 import Canvas from "./Canvas"
 import AssetTools from "./AssetTools"
 import TransformTools from "./TransformTools"
 
 const Create = () => {
   return (
-    <div>
+    <Fragment>
       <AssetTools />
       <Canvas />
       <TransformTools />
-    </div>
+    </Fragment>
   )
 }
 

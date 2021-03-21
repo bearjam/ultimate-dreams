@@ -1,5 +1,5 @@
 import { withUndoableReducer } from "@bearjam/tom"
-import { filter } from "fp-ts/lib/Array"
+import { filter } from "fp-ts/ReadonlyArray"
 import produce from "immer"
 import create from "zustand"
 import { persist } from "zustand/middleware"
@@ -25,18 +25,15 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
       }
     case "UPDATE_PAN":
       return produce(state, (draft) => {
-        console.log(action.payload)
         draft.pan.x += action.payload.dx
         draft.pan.y += action.payload.dy
       })
+
     case "UPDATE_ZOOM":
-      console.log(state, "before")
-      const next = {
+      return {
         ...state,
         zoom: action.payload.zoom,
       }
-      console.log(next, "after")
-      return next
     case "INSERT":
       return {
         ...state,
@@ -46,12 +43,16 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
     case "DELETE":
       return {
         ...state,
-        selectedItems: filter<CanvasItem>(
-          (item) => item.id !== action.payload.id
-        )(state.selectedItems),
-        items: filter<CanvasItem>((item) => item.id !== action.payload.id)(
-          state.items
-        ),
+        selectedItems: [
+          ...filter<CanvasItem>((item) => item.id !== action.payload.id)(
+            state.selectedItems
+          ),
+        ],
+        items: [
+          ...filter<CanvasItem>((item) => item.id !== action.payload.id)(
+            state.items
+          ),
+        ],
       }
     case "DELETE_ALL":
       return {

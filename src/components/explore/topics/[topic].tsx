@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
-import { filter, map } from "fp-ts/lib/Array"
-import { pipe } from "fp-ts/lib/function"
+import { filter, map } from "fp-ts/ReadonlyArray"
+import { pipe } from "fp-ts/function"
 import React from "react"
 import useSWR from "swr"
 import shallow from "zustand/shallow"

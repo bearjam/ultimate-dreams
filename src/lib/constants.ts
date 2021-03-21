@@ -1,1 +1,1 @@
-export const SCALE_QUOTIENT = 4000
+export const SCALE_QUOTIENT = 2000

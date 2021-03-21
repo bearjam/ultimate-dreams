@@ -2,6 +2,7 @@ import clsx from "clsx"
 import SvgCloseIcon from "icons/SvgCloseIcon"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { HTMLProps, useEffect, useRef, useState } from "react"
+import { useHotkeys } from "react-hotkeys-hook"
 import { animated, to, useSpring } from "react-spring"
 import { useGesture } from "react-use-gesture"
 import shallow from "zustand/shallow"
@@ -68,11 +69,10 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
     return [window.innerWidth / 2, window.innerHeight / 2]
   }
 
-  const containerClickHandler = () => {
+  const center = () => {
     const main = mainRef.current
     if (!main) return
     const rect = main.getBoundingClientRect()
-    console.log(rect)
     const [targetX, targetY] = getCenter()
     const currentX = rect.left + abs(rect.left - rect.right) / 2
     const currentY = rect.top + abs(rect.top - rect.bottom) / 2
@@ -85,14 +85,10 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
     })
   }
 
-  // useEffect(() => void logRect(), [pan])
+  useHotkeys("c", center)
 
   return (
-    <div
-      className={clsx(css.container, className)}
-      onClick={containerClickHandler}
-      {...props}
-    >
+    <div className={clsx(css.container, className)} {...props}>
       {!showPhotoBin ? (
         <button onClick={openPhotoBin}>
           <SvgPlusIcon />

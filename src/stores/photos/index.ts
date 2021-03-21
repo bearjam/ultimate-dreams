@@ -1,5 +1,5 @@
 import { withReducer } from "@bearjam/tom"
-import { filter } from "fp-ts/lib/Array"
+import { filter } from "fp-ts/ReadonlyArray"
 import create from "zustand"
 import { persist } from "zustand/middleware"
 import { PhotoStoreAction, PhotoStoreState } from "../../types/photos"
@@ -22,9 +22,11 @@ const reducer = (
     case "DELETE":
       return {
         ...state,
-        photos: filter<UnsplashPhotoT>(
-          (photo) => photo.id !== action.payload.id
-        )(state.photos),
+        photos: [
+          ...filter<UnsplashPhotoT>((photo) => photo.id !== action.payload.id)(
+            state.photos
+          ),
+        ],
       }
     case "DELETE_ALL":
       return {
