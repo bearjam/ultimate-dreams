@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import * as M from "rematrix"
 
-const useMatrix = <E extends HTMLElement | SVGElement>(
+const useMatrix = <E extends HTMLElement | SVGElement = HTMLDivElement>(
   initialMatrix?: M.Matrix3D
 ) => {
   const ref = useRef<E>(null)

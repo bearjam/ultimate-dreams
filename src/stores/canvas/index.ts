@@ -3,7 +3,7 @@ import { filter } from "fp-ts/ReadonlyArray"
 import produce from "immer"
 import create from "zustand"
 import { persist } from "zustand/middleware"
-import { CanvasAction, CanvasItem, CanvasState } from "../../types/canvas"
+import { CanvasAction, CanvasItemT, CanvasState } from "../../types/canvas"
 
 const initialState: CanvasState = {
   mode: "SELECT",
@@ -44,12 +44,12 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
       return {
         ...state,
         selectedItems: [
-          ...filter<CanvasItem>((item) => item.id !== action.payload.id)(
+          ...filter<CanvasItemT>((item) => item.id !== action.payload.id)(
             state.selectedItems
           ),
         ],
         items: [
-          ...filter<CanvasItem>((item) => item.id !== action.payload.id)(
+          ...filter<CanvasItemT>((item) => item.id !== action.payload.id)(
             state.items
           ),
         ],

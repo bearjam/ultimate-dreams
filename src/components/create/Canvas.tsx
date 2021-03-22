@@ -6,10 +6,8 @@ import { animated, to, useSpring } from "react-spring"
 import { useGesture } from "react-use-gesture"
 import shallow from "zustand/shallow"
 import { useCanvasStore } from "../../stores/canvas"
-import { CanvasImageItem, CanvasTextItem } from "../../types/canvas"
 import css from "./Canvas.module.css"
-import CanvasImage from "./CanvasImage"
-import CanvasText from "./CanvasText"
+import CanvasItem from "./CanvasItem"
 const { abs } = Math
 
 const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
@@ -94,15 +92,9 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
         {...bind()}
         ref={mainRef}
       >
-        {items.map(
-          (item) =>
-            ({
-              IMAGE: (
-                <CanvasImage key={item.id} {...(item as CanvasImageItem)} />
-              ),
-              TEXT: <CanvasText key={item.id} {...(item as CanvasTextItem)} />,
-            }[item.type])
-        )}
+        {items.map((item) => (
+          <CanvasItem key={item.id} item={item} />
+        ))}
       </animated.div>
     </div>
   )

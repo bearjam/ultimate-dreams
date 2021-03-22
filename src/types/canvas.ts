@@ -23,7 +23,7 @@ export type CanvasTextItem = CanvasItemBase & {
   text: string
 }
 
-export type CanvasItem = CanvasImageItem | CanvasTextItem
+export type CanvasItemT = CanvasImageItem | CanvasTextItem
 
 export type CanvasMode = "SELECT" | "MOVE" | "SCALE" | "ROTATE" | "CROP"
 
@@ -34,15 +34,15 @@ export type XYCoord = {
 
 export type CanvasState = {
   mode: CanvasMode
-  items: CanvasItem[]
-  selectedItems: CanvasItem[]
+  items: CanvasItemT[]
+  selectedItems: CanvasItemT[]
   pan: XYCoord
   zoom: number
 }
 
 export type InsertCanvasItemAction = {
   type: "INSERT"
-  payload: CanvasItem
+  payload: CanvasItemT
 }
 
 export type DeleteCanvasItemAction = {

@@ -6,23 +6,7 @@
   z-index: -10;
 }
 
-.container button {
-  @apply absolute text-5xl;
-  top: theme("spacing.20");
-  right: theme("spacing.4");
-}
-
-.photo-bin-popup {
-  @apply absolute w-screen h-screen top-0 left-0;
-  @apply bg-red-500;
-}
-
-.photo-bin-popup > div {
-  @apply pt-16;
-}
-
 .main {
   @apply bg-yellow-300;
   @apply touch-action-none select-none;
-  transform-origin: "50% 50%";
 }
