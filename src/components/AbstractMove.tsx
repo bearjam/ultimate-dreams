@@ -38,34 +38,4 @@ const AbstractMove = ({ children, update }: Props) => {
   )
 }
 
-export const withAbstractMove = <
-  P extends { update?: (x: number, y: number) => any }
->(
-  WrappedComponent: ComponentType<P>
-) => {
-  const displayName =
-    WrappedComponent.displayName || WrappedComponent.name || "Component"
-
-  const AnimatedComponent = animated(WrappedComponent)
-
-  return ({ update }: P) => {
-    const [style, set] = useSpring(() => ({
-      x: 0,
-      y: 0,
-    }))
-    const bind = useDrag(async ({ down, movement: [x, y] }) => {
-      await set({
-        x,
-        y,
-      })
-      if (!down) {
-        await set({ x: 0, y: 0, immediate: true })
-        update?.(x, y)
-      }
-    })
-    // @ts-ignore
-    return <AnimatedComponent style={style} {...bind()} />
-  }
-}
-
 export default AbstractMove
