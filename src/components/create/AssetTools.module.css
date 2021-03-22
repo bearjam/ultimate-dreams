@@ -1,3 +1,3 @@
-.root {
-  @apply hidden;
+button.open {
+  @apply text-4xl absolute right-0;
 }

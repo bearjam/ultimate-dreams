@@ -1,18 +1,15 @@
 import clsx from "clsx"
-import SvgCloseIcon from "icons/SvgCloseIcon"
 import { SCALE_QUOTIENT } from "lib/constants"
-import { HTMLProps, useEffect, useRef, useState } from "react"
+import { HTMLProps, useRef } from "react"
 import { useHotkeys } from "react-hotkeys-hook"
 import { animated, to, useSpring } from "react-spring"
 import { useGesture } from "react-use-gesture"
 import shallow from "zustand/shallow"
-import SvgPlusIcon from "../../icons/SvgPlusIcon"
 import { useCanvasStore } from "../../stores/canvas"
 import { CanvasImageItem, CanvasTextItem } from "../../types/canvas"
 import Text from "../Text"
 import css from "./Canvas.module.css"
 import CanvasImage from "./CanvasImage"
-import PhotoBin from "./PhotoBin"
 const { abs } = Math
 
 const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
@@ -26,10 +23,6 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
     }),
     shallow
   )
-
-  const [showPhotoBin, setShowPhotoBin] = useState(false)
-  const closePhotoBin = () => void setShowPhotoBin(false)
-  const openPhotoBin = () => void setShowPhotoBin(true)
 
   const [{ x, y, z }, set] = useSpring(() => ({
     x: 0,
@@ -89,18 +82,6 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
 
   return (
     <div className={clsx(css.container, className)} {...props}>
-      {!showPhotoBin ? (
-        <button onClick={openPhotoBin}>
-          <SvgPlusIcon />
-        </button>
-      ) : (
-        <div className={css["photo-bin-popup"]}>
-          <PhotoBin onDispatch={closePhotoBin} />
-          <button aria-label="close" onClick={closePhotoBin}>
-            <SvgCloseIcon />
-          </button>
-        </div>
-      )}
       <animated.div
         className={css.main}
         style={{

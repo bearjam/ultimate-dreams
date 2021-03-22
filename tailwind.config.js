@@ -8,8 +8,8 @@ const extraUtils = ({ addUtilities }) => {
 }
 
 module.exports = {
-  // purge: ["./src/**/*.{js,ts,jsx,tsx}", "./pages/**/*.{js,ts,jsx,tsx}"],
-  purge: false,
+  purge: ["./src/**/*.{js,ts,jsx,tsx}", "./pages/**/*.{js,ts,jsx,tsx}"],
+  // purge: false,
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},

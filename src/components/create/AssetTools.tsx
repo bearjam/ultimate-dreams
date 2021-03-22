@@ -1,21 +1,29 @@
-import clsx from "clsx"
-import React, { HTMLProps } from "react"
-import TextForm from "../TextForm"
-import css from "./AssetTools.module.css"
+import React from "react"
+import { Tab, TabList, TabPanel, Tabs as ReactTabs } from "react-tabs"
+import "react-tabs/style/react-tabs.css"
 import { useCanvasStore } from "stores/canvas"
 import { insertCanvasTextItemAction } from "stores/canvas/actions"
+import TextForm from "../TextForm"
 import PhotoBin from "./PhotoBin"
 
-const AssetTools = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
+const AssetTools = () => {
   const dispatch = useCanvasStore((store) => store.dispatch)
+
   return (
-    <div className={clsx(css.root, className)} {...props}>
-      <TextForm
-        className="border-red-500 border p-4 m-4"
-        onSubmit={(text) => dispatch(insertCanvasTextItemAction({ text }))}
-      />
-      <PhotoBin />
-    </div>
+    <ReactTabs>
+      <TabList>
+        <Tab>Text</Tab>
+        <Tab>Images</Tab>
+      </TabList>
+      <TabPanel>
+        <TextForm
+          onSubmit={(text) => dispatch(insertCanvasTextItemAction({ text }))}
+        />
+      </TabPanel>
+      <TabPanel>
+        <PhotoBin />
+      </TabPanel>
+    </ReactTabs>
   )
 }
 
