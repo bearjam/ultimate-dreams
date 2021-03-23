@@ -1,0 +1,4 @@
+.root {
+  position: absolute;
+  @apply inset-0 m-auto;
+}

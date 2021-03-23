@@ -26,8 +26,12 @@ const Canvas = ({ children }: PropsWithChildren<{}>) => {
 
   function getHandlers(): GestureHandlers {
     switch (mode) {
+      case "SELECT":
+        return {
+          onDrag: () => {},
+          onWheel: () => {},
+        }
       case "MOVE":
-      default:
         return {
           onDrag: async ({ movement: [mx, my], down }) => {
             if (down) {
@@ -49,6 +53,11 @@ const Canvas = ({ children }: PropsWithChildren<{}>) => {
               })
             }
           },
+        }
+      default:
+        return {
+          onDrag: () => {},
+          onWheel: () => {},
         }
     }
   }
@@ -102,9 +111,6 @@ const Canvas = ({ children }: PropsWithChildren<{}>) => {
           }
         })}
         {children}
-        <animated.pre>
-          {to([x, y, z], (x, y, z) => JSON.stringify({ x, y, z }, null, 2))}
-        </animated.pre>
       </animated.div>
     </div>
   )

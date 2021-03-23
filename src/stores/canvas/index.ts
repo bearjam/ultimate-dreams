@@ -37,8 +37,8 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
           (item) => item.id === action.payload.itemId
         )
         if (item) {
-          item.left += action.payload.dx
-          item.top += action.payload.dy
+          item.translate.x += action.payload.dx
+          item.translate.y += action.payload.dy
         }
       })
     case "INSERT_ITEM":
@@ -72,8 +72,8 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   }
 }
 
-// export const useCanvasStore = create(
-//   persist(withUndoableReducer(reducer, initialState), { name: "canvasStore" })
-// )
+export const useCanvasStore = create(
+  persist(withUndoableReducer(reducer, initialState), { name: "canvasStore" })
+)
 
-export const useCanvasStore = create(withUndoableReducer(reducer, initialState))
+// export const useCanvasStore = create(withUndoableReducer(reducer, initialState))

@@ -5,14 +5,20 @@ import {
   UserHandlers,
 } from "react-use-gesture/dist/types"
 
-export type WidthHeightTopLeft = {
+export type CanvasItemDimensions = {
   width: number
   height: number
-  top: number
-  left: number
 }
 
-export type CanvasItemBase = WidthHeightTopLeft & {
+export type CanvasItemTransforms = {
+  rotate: number
+  translate: XYCoord
+  scale: number
+}
+
+export type CanvasItemGeometry = CanvasItemDimensions & CanvasItemTransforms
+
+export type CanvasItemBase = CanvasItemGeometry & {
   id: string
   z?: number
 }
