@@ -1,75 +1,73 @@
-import clsx from "clsx"
 import { SCALE_QUOTIENT } from "lib/constants"
-import { HTMLProps, useRef } from "react"
-import { useHotkeys } from "react-hotkeys-hook"
+import { MutableRefObject, PropsWithChildren, useRef } from "react"
 import { animated, to, useSpring } from "react-spring"
+import { useKey } from "react-use"
 import { useGesture } from "react-use-gesture"
-import shallow from "zustand/shallow"
+import { GestureHandlers } from "types/canvas"
+import { isSSR, springConfig } from "../../lib/util"
 import { useCanvasStore } from "../../stores/canvas"
 import css from "./Canvas.module.css"
 import CanvasImage from "./CanvasImage"
 import CanvasText from "./CanvasText"
 const { abs } = Math
 
-const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
-  const { items, mode, dispatch, pan, zoom } = useCanvasStore(
-    ({ state: { items, mode, pan, zoom }, dispatch }) => ({
-      items,
-      mode,
-      dispatch,
-      pan,
-      zoom,
-    }),
-    shallow
-  )
-
+const Canvas = ({ children }: PropsWithChildren<{}>) => {
+  const [state, dispatch] = useCanvasStore((store) => [
+    store.state,
+    store.dispatch,
+  ])
+  const { items, mode, width, height } = state
   const [{ x, y, z }, set] = useSpring(() => ({
     x: 0,
     y: 0,
     z: 0,
-    config: {
-      duration: 0,
-    },
+    config: springConfig,
   }))
 
-  const bind = useGesture({
-    onDrag: ({ movement: [mx, my], down }) => {
-      if (down) {
-        set({ x: mx, y: my })
-      } else {
-        dispatch({ type: "UPDATE_PAN", payload: { dx: mx, dy: my } })
-        set({ x: 0, y: 0 })
-      }
-    },
-    onWheel: ({ movement: [_, my], wheeling }) => {
-      if (wheeling) {
-        set({ z: my })
-      } else {
-        dispatch({
-          type: "UPDATE_ZOOM",
-          payload: { zoom: zoom - my / SCALE_QUOTIENT },
-        })
-        set({ z: 0 })
-      }
-    },
-  })
-
-  const mainRef = useRef<HTMLDivElement | null>(null)
-
-  const getCenter = () => {
-    if (typeof window === "undefined") return [0, 0]
-    return [window.innerWidth / 2, window.innerHeight / 2]
+  function getHandlers(): GestureHandlers {
+    switch (mode) {
+      case "MOVE":
+      default:
+        return {
+          onDrag: async ({ movement: [mx, my], down }) => {
+            if (down) {
+              set({ x: mx, y: my })
+            } else {
+              await set({ x: 0, y: 0, immediate: true })
+              dispatch({ type: "PAN_CANVAS", payload: { dx: mx, dy: my } })
+            }
+          },
+          onWheel: async ({ movement: [_, my], wheeling }) => {
+            if (wheeling) {
+              set({ z: my })
+            } else {
+              const next = state.scale - z.get() / SCALE_QUOTIENT
+              await set({ z: 0, immediate: true })
+              dispatch({
+                type: "UPDATE_CANVAS",
+                payload: { scale: next },
+              })
+            }
+          },
+        }
+    }
   }
+  const bind = useGesture(getHandlers())
+
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  const getCenter = () =>
+    isSSR() ? [0, 0] : [window.innerWidth / 2, window.innerHeight / 2]
 
   const center = () => {
-    const main = mainRef.current
-    if (!main) return
-    const rect = main.getBoundingClientRect()
+    const el = ref.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
     const [targetX, targetY] = getCenter()
     const currentX = rect.left + abs(rect.left - rect.right) / 2
     const currentY = rect.top + abs(rect.top - rect.bottom) / 2
     dispatch({
-      type: "UPDATE_PAN",
+      type: "PAN_CANVAS",
       payload: {
         dx: -1 * (currentX - targetX),
         dy: -1 * (currentY - targetY),
@@ -77,32 +75,36 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
     })
   }
 
-  useHotkeys("c", center)
+  useKey("c", center)
 
   return (
-    <div className={clsx(css.container, className)} {...props}>
+    <div className={css.container}>
       <animated.div
+        ref={ref}
         className={css.main}
         style={{
-          width: 4000,
-          height: 4000,
-          scale: to([z], (z) => (z ? zoom - z / SCALE_QUOTIENT : zoom)),
-          x: to([x], (x) => pan.x + x),
-          y: to([y], (y) => pan.y + y),
+          width,
+          height,
+          x: x.to((x) => state.translate.x + x),
+          y: y.to((y) => state.translate.y + y),
+          scale: z.to((z) => state.scale - z / SCALE_QUOTIENT),
         }}
         {...bind()}
-        ref={mainRef}
       >
         {items.map((item) => {
           switch (item.type) {
             case "IMAGE":
-              return <CanvasImage key={item.id} item={item} mode={mode} />
+              return <CanvasImage key={item.id} item={item} />
             case "TEXT":
-              return <CanvasText key={item.id} item={item} mode={mode} />
+              return <CanvasText key={item.id} item={item} />
             default:
               return null
           }
         })}
+        {children}
+        <animated.pre>
+          {to([x, y, z], (x, y, z) => JSON.stringify({ x, y, z }, null, 2))}
+        </animated.pre>
       </animated.div>
     </div>
   )

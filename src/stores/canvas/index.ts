@@ -1,9 +1,5 @@
 import { withUndoableReducer } from "@bearjam/tom"
-import { partitionMap } from "fp-ts/Filterable"
-import { pipe } from "fp-ts/function"
 import { filter } from "fp-ts/ReadonlyArray"
-import { concat } from "fp-ts/ReadonlyNonEmptyArray"
-import { left, right } from "fp-ts/Separated"
 import produce from "immer"
 import create from "zustand"
 import { persist } from "zustand/middleware"
@@ -13,20 +9,28 @@ const initialState: CanvasState = {
   mode: "SELECT",
   items: [],
   selectedItems: [],
-  pan: {
+  width: 4000,
+  height: 4000,
+  rotate: 0,
+  translate: {
     x: 0,
     y: 0,
   },
-  zoom: 0.1,
+  scale: 0.5,
 }
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   switch (action.type) {
-    case "SET_MODE":
+    case "UPDATE_CANVAS":
       return {
         ...state,
-        mode: action.payload,
+        ...action.payload,
       }
+    case "PAN_CANVAS":
+      return produce(state, (draft) => {
+        draft.translate.x += action.payload.dx
+        draft.translate.y += action.payload.dy
+      })
     case "MOVE_ITEM":
       return produce(state, (draft) => {
         const item = draft.items.find(
@@ -37,24 +41,13 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
           item.top += action.payload.dy
         }
       })
-    case "UPDATE_PAN":
-      return produce(state, (draft) => {
-        draft.pan.x += action.payload.dx
-        draft.pan.y += action.payload.dy
-      })
-
-    case "UPDATE_ZOOM":
-      return {
-        ...state,
-        zoom: action.payload.zoom,
-      }
-    case "INSERT":
+    case "INSERT_ITEM":
       return {
         ...state,
         items: [...state.items, action.payload],
         selectedItems: [action.payload],
       }
-    case "DELETE":
+    case "DELETE_ITEM":
       return {
         ...state,
         selectedItems: [
@@ -68,7 +61,7 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
           ),
         ],
       }
-    case "DELETE_ALL":
+    case "DELETE_ALL_ITEMS":
       return {
         ...state,
         items: [],
@@ -79,6 +72,8 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   }
 }
 
-export const useCanvasStore = create(
-  persist(withUndoableReducer(reducer, initialState), { name: "canvasStore" })
-)
+// export const useCanvasStore = create(
+//   persist(withUndoableReducer(reducer, initialState), { name: "canvasStore" })
+// )
+
+export const useCanvasStore = create(withUndoableReducer(reducer, initialState))

@@ -35,3 +35,11 @@ export const getWidthHeight = (photo: UnsplashPhotoT) => {
   let width = getWidth()
   return { width, height: (photo.height / photo.width) * width }
 }
+
+export const springConfig = {
+  mass: 0.5,
+  tension: 500,
+  friction: 25,
+}
+
+export const isSSR = () => typeof window === "undefined"

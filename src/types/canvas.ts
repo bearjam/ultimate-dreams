@@ -1,5 +1,9 @@
-import * as z from "zod"
-import { UnsplashPhotoT } from "./unsplash"
+import { Dispatcher, Patcher } from "@bearjam/tom"
+import {
+  EventTypes,
+  NativeHandlers,
+  UserHandlers,
+} from "react-use-gesture/dist/types"
 
 export type WidthHeightTopLeft = {
   width: number
@@ -36,44 +40,32 @@ export type CanvasState = {
   mode: CanvasMode
   items: CanvasItemT[]
   selectedItems: CanvasItemT[]
-  pan: XYCoord
-  zoom: number
+  width: number
+  height: number
+  rotate: number
+  translate: XYCoord
+  scale: number
 }
 
 export type InsertCanvasItemAction = {
-  type: "INSERT"
+  type: "INSERT_ITEM"
   payload: CanvasItemT
 }
 
 export type DeleteCanvasItemAction = {
-  type: "DELETE"
+  type: "DELETE_ITEM"
   payload: {
     id: string
   }
 }
 
 export type DeleteAllCanvasItemsAction = {
-  type: "DELETE_ALL"
+  type: "DELETE_ALL_ITEMS"
 }
 
-export type SetModeAction = {
-  type: "SET_MODE"
-  payload: CanvasMode
-}
-
-export type UpdatePanAction = {
-  type: "UPDATE_PAN"
-  payload: {
-    dx: number
-    dy: number
-  }
-}
-
-export type UpdateZoomAction = {
-  type: "UPDATE_ZOOM"
-  payload: {
-    zoom: number
-  }
+export type UpdateCanvasAction = {
+  type: "UPDATE_CANVAS"
+  payload: Partial<CanvasState>
 }
 
 export type MoveCanvasItemAction = {
@@ -85,11 +77,32 @@ export type MoveCanvasItemAction = {
   }
 }
 
+export type PanCanvasAction = {
+  type: "PAN_CANVAS"
+  payload: {
+    dx: number
+    dy: number
+  }
+}
+
 export type CanvasAction =
   | InsertCanvasItemAction
   | DeleteCanvasItemAction
   | DeleteAllCanvasItemsAction
-  | SetModeAction
-  | UpdatePanAction
-  | UpdateZoomAction
+  | UpdateCanvasAction
   | MoveCanvasItemAction
+  | PanCanvasAction
+
+export type CanvasStore = Dispatcher<CanvasState, CanvasAction> & Patcher
+
+export type CanvasDispatch = (a: CanvasAction) => CanvasAction
+
+export type GestureHandlers = Partial<
+  UserHandlers<EventTypes> & NativeHandlers<EventTypes>
+>
+
+export type CanvasTransform = {
+  x: number
+  y: number
+  scale: number
+}

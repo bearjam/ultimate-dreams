@@ -3,32 +3,15 @@ import React from "react"
 import { animated } from "react-spring"
 import { CanvasMode, CanvasTextItem } from "types/canvas"
 
-const useMode = (item: CanvasTextItem, mode: CanvasMode) => {
-  switch (mode) {
-    default:
-      return selectMode(item)
-  }
-}
-
 type Props = {
   item: CanvasTextItem
-  mode: CanvasMode
 }
 
-const CanvasText = ({ item, mode }: Props) => {
+const CanvasText = ({ item }: Props) => {
   const { text, top, left, width, height } = item
-  const { style: springStyle, children: extraChildren, ...modeProps } = useMode(
-    item,
-    mode
-  )
   return (
-    <animated.div
-      className="absolute"
-      style={{ top, left, width, height, ...springStyle }}
-      {...modeProps}
-    >
+    <animated.div className="absolute" style={{ top, left, width, height }}>
       {text}
-      {extraChildren}
     </animated.div>
   )
 }

@@ -46,7 +46,10 @@ const TransformTools = ({ className, ...props }: Props) => {
               <animated.div
                 style={style as any}
                 onClick={() =>
-                  dispatch({ type: "SET_MODE", payload: iconMode })
+                  dispatch({
+                    type: "UPDATE_CANVAS",
+                    payload: { mode: iconMode },
+                  })
                 }
               >
                 <Icon />

@@ -13,7 +13,7 @@ export const insertCanvasTextItemAction = ({
   top = 50,
   left = 50,
 }: Partial<Omit<CanvasTextItem, "type">>): InsertCanvasItemAction => ({
-  type: "INSERT",
+  type: "INSERT_ITEM",
   payload: {
     type: "TEXT",
     id,
@@ -38,7 +38,7 @@ export const insertCanvasImageItemAction = ({
   top = 50,
   left = 50,
 }: InsertCanvasImageItemActionArgsT): InsertCanvasItemAction => ({
-  type: "INSERT",
+  type: "INSERT_ITEM",
   payload: {
     type: "IMAGE",
     id,

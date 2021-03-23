@@ -51,10 +51,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@bearjam/tom@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@bearjam/tom/-/tom-0.2.4.tgz#0c240b675942727fce3125c214eea394e291c641"
-  integrity sha512-6xgHFW3KbldJDtmjuS7xpYf5G6dYUtcN1fOO66ZZAWTemGJryerkCSNIQKor+AmbR2N35GXNgC2L7IJS1feZ1A==
+"@bearjam/tom@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@bearjam/tom/-/tom-0.2.5.tgz#840b78fc45c12b1ecb5bc5e400d996cb04aa36dc"
+  integrity sha512-L8P+p9P9eNvDINrkFFVdu6uq5lp53tA8FiNuZgp4ZL8e8uusoHTVTDYaTmaLn2ku/vzen2bPYILX0kRfuWzFGw==
   dependencies:
     "@types/change-case" "^2.3.1"
     change-case "^4.1.2"

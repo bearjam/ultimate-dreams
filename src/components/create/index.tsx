@@ -1,20 +1,19 @@
-import React, { Fragment as div, useEffect } from "react"
-import Canvas from "./Canvas"
-import AssetTools from "./AssetTools"
-import TransformTools from "./TransformTools"
+import SvgCloseIcon from "icons/SvgCloseIcon"
+import SvgPlusIcon from "icons/SvgPlusIcon"
+import React from "react"
+import ReactModal from "react-modal"
 import { useMedia, useToggle } from "react-use"
 import theme from "tailwindcss/defaultTheme"
-import SvgPlusIcon from "icons/SvgPlusIcon"
+import AssetTools from "./AssetTools"
+import Canvas from "./Canvas"
 import css from "./index.module.css"
-import ReactModal from "react-modal"
-import SvgCloseIcon from "icons/SvgCloseIcon"
+import TransformTools from "./TransformTools"
 
 ReactModal.setAppElement("#__next")
 
 const Create = () => {
   const big = useMedia(`(min-width: ${theme.screens.sm})`)
   const [assetToolsOpen, toggleAssetTools] = useToggle(false)
-  // useEffect(() => void (big ? toggleAssetTools(false) : null), [big])
 
   return (
     <div>
