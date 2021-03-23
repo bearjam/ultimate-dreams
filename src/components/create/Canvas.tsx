@@ -7,7 +7,8 @@ import { useGesture } from "react-use-gesture"
 import shallow from "zustand/shallow"
 import { useCanvasStore } from "../../stores/canvas"
 import css from "./Canvas.module.css"
-import CanvasItem from "./CanvasItem"
+import CanvasImage from "./CanvasImage"
+import CanvasText from "./CanvasText"
 const { abs } = Math
 
 const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
@@ -92,9 +93,16 @@ const Canvas = ({ className, ...props }: HTMLProps<HTMLDivElement>) => {
         {...bind()}
         ref={mainRef}
       >
-        {items.map((item) => (
-          <CanvasItem key={item.id} item={item} />
-        ))}
+        {items.map((item) => {
+          switch (item.type) {
+            case "IMAGE":
+              return <CanvasImage key={item.id} item={item} mode={mode} />
+            case "TEXT":
+              return <CanvasText key={item.id} item={item} mode={mode} />
+            default:
+              return null
+          }
+        })}
       </animated.div>
     </div>
   )

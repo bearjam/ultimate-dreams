@@ -1,5 +1,9 @@
 import { withUndoableReducer } from "@bearjam/tom"
+import { partitionMap } from "fp-ts/Filterable"
+import { pipe } from "fp-ts/function"
 import { filter } from "fp-ts/ReadonlyArray"
+import { concat } from "fp-ts/ReadonlyNonEmptyArray"
+import { left, right } from "fp-ts/Separated"
 import produce from "immer"
 import create from "zustand"
 import { persist } from "zustand/middleware"
@@ -23,6 +27,16 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         ...state,
         mode: action.payload,
       }
+    case "MOVE_ITEM":
+      return produce(state, (draft) => {
+        const item = draft.items.find(
+          (item) => item.id === action.payload.itemId
+        )
+        if (item) {
+          item.left += action.payload.dx
+          item.top += action.payload.dy
+        }
+      })
     case "UPDATE_PAN":
       return produce(state, (draft) => {
         draft.pan.x += action.payload.dx

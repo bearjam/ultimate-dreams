@@ -76,6 +76,15 @@ export type UpdateZoomAction = {
   }
 }
 
+export type MoveCanvasItemAction = {
+  type: "MOVE_ITEM"
+  payload: {
+    itemId: string
+    dx: number
+    dy: number
+  }
+}
+
 export type CanvasAction =
   | InsertCanvasItemAction
   | DeleteCanvasItemAction
@@ -83,3 +92,4 @@ export type CanvasAction =
   | SetModeAction
   | UpdatePanAction
   | UpdateZoomAction
+  | MoveCanvasItemAction

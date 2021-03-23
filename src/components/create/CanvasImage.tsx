@@ -1,17 +1,32 @@
-import clsx from "clsx"
+import { selectMode } from "lib/modes"
 import NextImage from "next/image"
-import { forwardRef, HTMLProps } from "react"
-import { CanvasImageItem } from "types/canvas"
+import { forwardRef } from "react"
+import { animated } from "react-spring"
+import { CanvasImageItem, CanvasMode } from "types/canvas"
 
-const CanvasImage = forwardRef<
-  HTMLDivElement,
-  HTMLProps<HTMLDivElement> & CanvasImageItem
->(({ src, width, height, top, left, className, style, ...props }, ref) => {
+const useMode = (item: CanvasImageItem, mode: CanvasMode) => {
+  switch (mode) {
+    default:
+      return selectMode(item)
+  }
+}
+
+type Props = {
+  item: CanvasImageItem
+  mode: CanvasMode
+}
+
+const CanvasImage = forwardRef<HTMLDivElement, Props>(({ item, mode }, ref) => {
+  const { src, width, height, top, left } = item
+  const { style: springStyle, children: extraChildren, ...modeProps } = useMode(
+    item,
+    mode
+  )
   return (
-    <div
-      className={clsx("absolute", className)}
-      style={{ width, height, top, left, ...style }}
-      {...props}
+    <animated.div
+      className="absolute"
+      style={{ width, height, top, left, ...springStyle }}
+      {...modeProps}
       ref={ref}
     >
       <NextImage
@@ -20,7 +35,8 @@ const CanvasImage = forwardRef<
         width={width}
         height={height}
       />
-    </div>
+      {extraChildren}
+    </animated.div>
   )
 })
 
