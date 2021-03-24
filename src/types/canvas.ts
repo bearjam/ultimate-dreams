@@ -49,9 +49,8 @@ export type CanvasState = {
   width: number
   height: number
   rotate: number
-  translate: XYCoord
   scale: number
-}
+} & XYCoord
 
 export type InsertCanvasItemAction = {
   type: "INSERT_ITEM"
@@ -91,6 +90,16 @@ export type PanCanvasAction = {
   }
 }
 
+export type SelectItemsAction = {
+  type: "SELECT_ITEMS"
+  payload: {
+    x0: number
+    y0: number
+    x1: number
+    y1: number
+  }
+}
+
 export type CanvasAction =
   | InsertCanvasItemAction
   | DeleteCanvasItemAction
@@ -98,6 +107,7 @@ export type CanvasAction =
   | UpdateCanvasAction
   | MoveCanvasItemAction
   | PanCanvasAction
+  | SelectItemsAction
 
 export type CanvasStore = Dispatcher<CanvasState, CanvasAction> & Patcher
 

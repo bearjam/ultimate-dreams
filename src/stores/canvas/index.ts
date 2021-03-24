@@ -12,15 +12,17 @@ const initialState: CanvasState = {
   width: 4000,
   height: 4000,
   rotate: 0,
-  translate: {
-    x: 0,
-    y: 0,
-  },
+  x: 0,
+  y: 0,
   scale: 0.5,
 }
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   switch (action.type) {
+    case "SELECT_ITEMS": {
+      console.log(action)
+      return state
+    }
     case "UPDATE_CANVAS":
       return {
         ...state,
@@ -28,8 +30,8 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
       }
     case "PAN_CANVAS":
       return produce(state, (draft) => {
-        draft.translate.x += action.payload.dx
-        draft.translate.y += action.payload.dy
+        draft.x += action.payload.dx
+        draft.y += action.payload.dy
       })
     case "MOVE_ITEM":
       return produce(state, (draft) => {
