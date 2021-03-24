@@ -100,6 +100,13 @@ export type SelectItemsAction = {
   }
 }
 
+export type ZoomCanvasAction = {
+  type: "ZOOM_CANVAS"
+  payload: {
+    scaleDelta: number
+  }
+}
+
 export type CanvasAction =
   | InsertCanvasItemAction
   | DeleteCanvasItemAction
@@ -107,6 +114,7 @@ export type CanvasAction =
   | UpdateCanvasAction
   | MoveCanvasItemAction
   | PanCanvasAction
+  | ZoomCanvasAction
   | SelectItemsAction
 
 export type CanvasStore = Dispatcher<CanvasState, CanvasAction> & Patcher

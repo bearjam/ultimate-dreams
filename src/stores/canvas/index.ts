@@ -1,6 +1,7 @@
 import { withUndoableReducer } from "@bearjam/tom"
 import { filter } from "fp-ts/ReadonlyArray"
 import produce from "immer"
+import { SCALE_QUOTIENT } from "lib/constants"
 import create from "zustand"
 import { persist } from "zustand/middleware"
 import { CanvasAction, CanvasItemT, CanvasState } from "../../types/canvas"
@@ -32,6 +33,11 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
       return produce(state, (draft) => {
         draft.x += action.payload.dx
         draft.y += action.payload.dy
+      })
+    case "ZOOM_CANVAS":
+      return produce(state, (draft) => {
+        draft.scale -= action.payload.scaleDelta / SCALE_QUOTIENT
+        console.log(draft.scale)
       })
     case "MOVE_ITEM":
       return produce(state, (draft) => {
