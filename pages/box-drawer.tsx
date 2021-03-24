@@ -26,20 +26,20 @@ const Parent = ({ children }: PropsWithChildren<{}>) => {
   })
   return (
     <div className="absolute w-full h-full bg-gray-400" {...bind()}>
-      {children}
-      <div className="relative border-8 border-black">
-        <animated.div
-          className="absolute bg-pink-500 top-0 left-0 opacity-30 "
+      <svg className="absolute w-full h-full bg-yellow-200">
+        <animated.rect
+          x={to([x0], (x) => x)}
+          y={to([y0], (x) => x)}
+          width={to([x0, x1], (x0, x1) => abs(x1 - x0))}
+          height={to([y0, y1], (y0, y1) => abs(y1 - y0))}
           style={{
-            width: 1,
-            height: 1,
-            scaleX: to([x0, x1], (x0, x1) => x1 - x0),
-            scaleY: to([y0, y1], (y0, y1) => y1 - y0),
-            x: to([x0, x1], (x0, x1) => x0 + (x1 - x0) / 2),
-            y: to([y0, y1], (y0, y1) => y0 + (y1 - y0) / 2),
+            scaleX: to([x0, x1], (x0, x1) => (x1 - x0 < 0 ? -1 : 1)),
+            scaleY: to([y0, y1], (y0, y1) => (y1 - y0 < 0 ? -1 : 1)),
           }}
+          stroke="tomato"
+          fill="steelblue"
         />
-      </div>
+      </svg>
     </div>
   )
 }
