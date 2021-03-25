@@ -1,6 +1,6 @@
 import Header from "components/Header"
 import { useRouter } from "next/router"
-import React, { PropsWithChildren } from "react"
+import React from "react"
 import { Flipper } from "react-flip-toolkit"
 import { LayoutType } from "types/layouts"
 
