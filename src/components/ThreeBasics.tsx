@@ -1,6 +1,7 @@
+import { to } from "@react-spring/core"
 import { OrbitControls } from "@react-three/drei"
 import React, { Fragment, useMemo, useState } from "react"
-import { Canvas, extend, useThree } from "react-three-fiber"
+import { Canvas, extend, useFrame, useThree } from "react-three-fiber"
 import * as THREE from "three"
 extend({ OrbitControls })
 
@@ -13,12 +14,14 @@ const Plane = () => {
     []
   )
 
+  useFrame(() => {})
+
+  // const geom = to([x0,y0,x1,y1], (x0,y0,x1,y1) => new THREE.PlaneBufferGeometry(x1 - x0, y1 - y0))
   return (
     <Fragment>
       <mesh>
         <primitive object={geom} attach="geometry" />
-        <planeBufferGeometry args={[viewport.width, viewport.height]} />
-        <meshStandardMaterial color="steelblue" />
+        <meshStandardMaterial color="orange" />
       </mesh>
       <lineSegments>
         <edgesGeometry attach="geometry" args={[geom]} />
