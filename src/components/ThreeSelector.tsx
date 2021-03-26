@@ -5,10 +5,17 @@ import { Canvas, useThree } from "react-three-fiber"
 import { useDrag } from "react-use-gesture"
 import { Mesh } from "three"
 
-const Plane = () => {
+type Props = {
+  onSelect: (initial: [number, number], xy: [number, number]) => any
+}
+
+const Selector = ({ onSelect }: Props) => {
   const {
-    viewport: { width, height, factor },
+    viewport: { width, height, factor, distance },
+    size,
   } = useThree()
+
+  const [left, top] = [size.left, size.top].map((v) => v / factor)
 
   const ref = useRef<Mesh>()
 
@@ -24,12 +31,18 @@ const Plane = () => {
 
   useLayoutEffect(() => void scale(0, 0), [])
 
-  const bind = useDrag(({ initial, xy }) => {
+  const bind = useDrag(({ down, initial, xy }) => {
+    if (!down) {
+      onSelect(initial, xy)
+      scale(0, 0)
+      return
+    }
+
     const pipeline = (xy: [number, number]) =>
       pipe(
         xy,
         map((v) => v / factor),
-        ([x, y]) => [x - width / 2, -y + height / 2]
+        ([x, y]) => [x - (width / 2 + left), -1 * y + (height / 2 + top)]
       )
 
     const [x0, y0] = pipe(initial, pipeline)
@@ -53,12 +66,12 @@ const Plane = () => {
   )
 }
 
-const ThreeFooAgain = () => {
+const ThreeSelector = (props: Props) => {
   return (
     <Canvas>
-      <Plane />
+      <Selector {...props} />
     </Canvas>
   )
 }
 
-export default ThreeFooAgain
+export default ThreeSelector
