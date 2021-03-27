@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic"
 import React from "react"
 import { NoopLayout } from "src/layouts"
+import * as M from "rematrix"
 
 const ThreeSelector = dynamic(() => import("components/ThreeSelector"), {
   ssr: false,
@@ -14,9 +15,17 @@ const Test = () => {
         style={{
           width: "48rem",
           height: "48rem",
+          transform: M.toString(M.scale(0.5)),
         }}
       >
-        <ThreeSelector onSelect={console.log} />
+        <div
+          className="bg-red-500 relative opacity-5"
+          style={{
+            transform: M.toString(M.scale(2)),
+          }}
+        >
+          <ThreeSelector onSelect={console.log} />
+        </div>
       </div>
     </div>
   )

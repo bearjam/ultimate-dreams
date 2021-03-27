@@ -20,6 +20,15 @@ const initialState: CanvasState = {
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   switch (action.type) {
+    case "SCALE_ITEM":
+      return produce(state, (draft) => {
+        const item = draft.items.find(
+          (item) => item.id === action.payload.itemId
+        )
+        if (!item) return
+        item.scale += action.payload.scaleDelta
+        console.log(item)
+      })
     case "SELECT_ITEMS": {
       console.log(action)
       return state

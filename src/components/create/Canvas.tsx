@@ -1,5 +1,4 @@
 import { SCALE_QUOTIENT } from "lib/constants"
-import { PropsWithChildren } from "react"
 import { animated, to, useSpring } from "react-spring"
 import { useGesture } from "react-use-gesture"
 import * as M from "rematrix"
@@ -9,6 +8,10 @@ import { useCanvasStore } from "../../stores/canvas"
 import css from "./Canvas.module.css"
 import CanvasImage from "./CanvasImage"
 import CanvasText from "./CanvasText"
+import dynamic from "next/dynamic"
+const ThreeSelector = dynamic(() => import("components/ThreeSelector"), {
+  ssr: false,
+})
 
 const Canvas = () => {
   const [state, dispatch] = useCanvasStore((store) => [
@@ -26,8 +29,8 @@ const Canvas = () => {
     config: springConfig,
   }))
 
-  const handlerZ = async (z: number, acting: boolean) => {
-    if (acting) {
+  const handlerZ = async (z: number, engaged: boolean) => {
+    if (engaged) {
       await set({ z })
     } else {
       const payload = { scaleDelta: z }
@@ -107,29 +110,6 @@ const Canvas = () => {
               return null
           }
         })}
-        <animated.div
-          className="absolute inset-0 m-0 bg-red-500 opacity-50 pointer-events-none touch-action-none"
-          style={{
-            width: to([], () => 1 / state.scale),
-            height: to([], () => 1 / state.scale),
-            matrix3d: to([x0, y0, x1, y1], (x0, y0, x1, y1) => {
-              switch (mode) {
-                case "SELECT":
-                  const [tx, ty] = [x1 - x0, y1 - y0].map(
-                    (v) => (1 / state.scale) * v
-                  )
-                  const next = M.multiply(
-                    M.translate(tx, ty),
-                    M.scale(state.scale * tx, state.scale * ty)
-                  )
-                  console.log(next)
-                  return next
-                default:
-                  return M.scale(0)
-              }
-            }),
-          }}
-        />
       </animated.div>
     </div>
   )

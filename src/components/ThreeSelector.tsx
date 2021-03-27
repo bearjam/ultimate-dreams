@@ -4,6 +4,7 @@ import React, { useLayoutEffect, useRef } from "react"
 import { Canvas, useThree } from "react-three-fiber"
 import { useDrag } from "react-use-gesture"
 import { Mesh } from "three"
+import * as M from "rematrix"
 
 type Props = {
   onSelect: (initial: [number, number], xy: [number, number]) => any
@@ -68,7 +69,9 @@ const Selector = ({ onSelect }: Props) => {
 
 const ThreeSelector = (props: Props) => {
   return (
-    <Canvas>
+    <Canvas
+    // style={{ transform: M.toString(M.inverse(M.scale(0.5))) }}
+    >
       <Selector {...props} />
     </Canvas>
   )
