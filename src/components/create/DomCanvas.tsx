@@ -5,15 +5,15 @@ import * as M from "rematrix"
 import { useCenterElement } from "src/hooks/useCenterElement"
 import { springConfig } from "../../lib/util"
 import { useCanvasStore } from "../../stores/canvas"
-import css from "./Canvas.module.css"
-import CanvasImage from "./CanvasImage"
-import CanvasText from "./CanvasText"
+import css from "./DomCanvas.module.css"
+import DomCanvasImage from "./DomCanvasImage"
+import DomCanvasText from "./DomCanvasText"
 import dynamic from "next/dynamic"
 const ThreeSelector = dynamic(() => import("components/ThreeSelector"), {
   ssr: false,
 })
 
-const Canvas = () => {
+const DomCanvas = () => {
   const [state, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
@@ -103,9 +103,9 @@ const Canvas = () => {
         {items.map((item) => {
           switch (item.type) {
             case "IMAGE":
-              return <CanvasImage key={item.id} item={item} />
+              return <DomCanvasImage key={item.id} item={item} />
             case "TEXT":
-              return <CanvasText key={item.id} item={item} />
+              return <DomCanvasText key={item.id} item={item} />
             default:
               return null
           }
@@ -115,4 +115,4 @@ const Canvas = () => {
   )
 }
 
-export default Canvas
+export default DomCanvas

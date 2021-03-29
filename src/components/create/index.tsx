@@ -5,6 +5,7 @@ import ReactModal from "react-modal"
 import { useMedia, useToggle } from "react-use"
 import theme from "tailwindcss/defaultTheme"
 import AssetTools from "./AssetTools"
+import DomCanvas from "./DomCanvas"
 import css from "./index.module.css"
 import ThreeCanvas from "./ThreeCanvas"
 import TransformTools from "./TransformTools"
@@ -31,6 +32,7 @@ const Create = () => {
         <AssetTools />
       )}
       <div className="absolute w-full h-full">
+        <DomCanvas />
         <ThreeCanvas />
       </div>
       <TransformTools />

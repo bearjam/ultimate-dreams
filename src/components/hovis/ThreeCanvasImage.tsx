@@ -1,13 +1,12 @@
 import { SCALE_QUOTIENT } from "lib/constants"
-import { springConfig } from "lib/util"
-import React, { Fragment } from "react"
+import { springConfig, withSuspense } from "lib/util"
+import React, { Fragment, Suspense } from "react"
 import { to, animated, useSpring } from "react-spring/three"
 import { useLoader, useThree } from "react-three-fiber"
 import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
 import * as THREE from "three"
 import { CanvasImageItem, GestureHandlers } from "types/canvas"
-import ThreeResizeHandle from "./ThreeResizeHandle"
 
 type Props = { item: CanvasImageItem }
 
@@ -85,29 +84,25 @@ const ThreeCanvasImage = ({ item }: Props) => {
   const scale = to([z], (z) => [item.scale + z, item.scale + z, 1])
 
   function modeChildren() {
-    switch (mode) {
-      case "SCALE":
-        return [...Array(4)].map((_, i) => (
-          <ThreeResizeHandle
-            key={i}
-            item={item}
-            ord={i}
-            position={position}
-            scale={scale}
-          />
-        ))
-      default:
-        return <Fragment></Fragment>
-    }
+    // switch (mode) {
+    //   case "SCALE":
+    //     return [...Array(4)].map((_, i) => (
+    //       <ThreeResizeHandle
+    //         key={i}
+    //         item={item}
+    //         ord={i}
+    //         position={position}
+    //         scale={scale}
+    //       />
+    //     ))
+    // }
   }
 
   return (
     <Fragment>
       <animated.mesh
-        // @ts-ignore
-        position={position}
-        // @ts-ignore
-        scale={scale}
+        position={position as any}
+        scale={scale as any}
         {...bind()}
       >
         <planeBufferGeometry args={[width, height]} />
@@ -118,4 +113,4 @@ const ThreeCanvasImage = ({ item }: Props) => {
   )
 }
 
-export default ThreeCanvasImage
+export default withSuspense(ThreeCanvasImage)

@@ -1,0 +1,37 @@
+.canvasContainer {
+  @apply bg-gray-500;
+  @apply fixed w-full h-full;
+  /* @apply overflow-scroll; */
+}
+
+.canvasContainer > * {
+  @apply absolute;
+  @apply inset-0 m-auto;
+}
+
+.domCanvas {
+  @apply bg-pink-300;
+  @apply overflow-hidden;
+}
+
+.domCanvasItem {
+  position: absolute;
+  @apply inset-0 m-auto;
+}
+
+.threeCanvas {
+  /* @apply bg-red-500 opacity-50; */
+}
+
+.assetTools {
+  @apply absolute;
+  @apply bg-green-500;
+  @apply border-4 border-black;
+}
+
+.transformTools {
+  @apply fixed bottom-0 w-full p-4;
+  @apply bg-yellow-800;
+  @apply text-4xl;
+  @apply flex justify-evenly;
+}

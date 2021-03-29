@@ -1,4 +1,5 @@
 import { parseUrl } from "query-string"
+import { ReactNode, Suspense } from "react"
 import { UnsplashPhotoT } from "types/unsplash"
 import * as z from "zod"
 
@@ -43,3 +44,11 @@ export const getWidthHeight = (photo: UnsplashPhotoT) => {
   let width = getWidth()
   return { width, height: (photo.height / photo.width) * width }
 }
+
+export const withSuspense = (Component: (props: any) => JSX.Element) => (
+  props: any
+) => (
+  <Suspense fallback={null}>
+    <Component {...props} />
+  </Suspense>
+)

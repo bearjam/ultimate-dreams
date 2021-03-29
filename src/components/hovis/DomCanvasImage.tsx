@@ -1,23 +1,22 @@
 import { SCALE_QUOTIENT } from "lib/constants"
 import { springConfig } from "lib/util"
-import React from "react"
+import NextImage from "next/image"
 import { animated, useSpring } from "react-spring"
 import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
-import { CanvasMode, CanvasTextItem, GestureHandlers } from "types/canvas"
-import css from "./CanvasText.module.css"
+import { CanvasImageItem, GestureHandlers } from "types/canvas"
+import css from "./index.module.css"
 
 type Props = {
-  item: CanvasTextItem
+  item: CanvasImageItem
 }
 
-const CanvasText = ({ item }: Props) => {
-  const { text, width, height } = item
-  const [state, dispatch] = useCanvasStore((store) => [
+const DomCanvasImage = ({ item }: Props) => {
+  const [{ mode, scale }, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
   ])
-  const { mode } = state
+  const { src, width, height } = item
 
   const [{ x, y, z }, set] = useSpring(() => ({
     x: 0,
@@ -33,7 +32,7 @@ const CanvasText = ({ item }: Props) => {
           onDrag: async ({ event, down, movement }) => {
             event.stopPropagation()
             event.preventDefault()
-            const [mx, my] = movement.map((v) => (1 / state.scale) * v)
+            const [mx, my] = movement.map((v) => (1 / scale) * v)
             if (down) {
               set({ x: mx, y: my })
             } else {
@@ -56,7 +55,7 @@ const CanvasText = ({ item }: Props) => {
 
   return (
     <animated.div
-      className={css.root}
+      className={css.domCanvasItem}
       style={{
         width,
         height,
@@ -66,9 +65,14 @@ const CanvasText = ({ item }: Props) => {
       }}
       {...bind()}
     >
-      {text}
+      <NextImage
+        className="touch-action-none select-none pointer-events-none"
+        src={src}
+        width={width}
+        height={height}
+      />
     </animated.div>
   )
 }
 
-export default CanvasText
+export default DomCanvasImage

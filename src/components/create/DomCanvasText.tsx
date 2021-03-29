@@ -1,19 +1,18 @@
 import { SCALE_QUOTIENT } from "lib/constants"
 import { springConfig } from "lib/util"
-import NextImage from "next/image"
+import React from "react"
 import { animated, useSpring } from "react-spring"
 import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
-import { CanvasImageItem, GestureHandlers } from "types/canvas"
-import shallow from "zustand/shallow"
-import css from "./CanvasImage.module.css"
+import { CanvasTextItem, GestureHandlers } from "types/canvas"
+import css from "./DomCanvasText.module.css"
 
 type Props = {
-  item: CanvasImageItem
+  item: CanvasTextItem
 }
 
-const CanvasImage = ({ item }: Props) => {
-  const { src, width, height } = item
+const DomCanvasText = ({ item }: Props) => {
+  const { text, width, height } = item
   const [state, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
@@ -67,14 +66,9 @@ const CanvasImage = ({ item }: Props) => {
       }}
       {...bind()}
     >
-      <NextImage
-        className="touch-action-none select-none pointer-events-none"
-        src={src}
-        width={width}
-        height={height}
-      />
+      {text}
     </animated.div>
   )
 }
 
-export default CanvasImage
+export default DomCanvasText
