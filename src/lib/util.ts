@@ -31,11 +31,6 @@ export const getWidth = () => {
   return !window ? 600 : min(window.innerWidth, 1600)
 }
 
-export const getWidthHeight = (photo: UnsplashPhotoT) => {
-  let width = getWidth()
-  return { width, height: (photo.height / photo.width) * width }
-}
-
 export const springConfig = {
   mass: 0.5,
   tension: 500,
@@ -43,3 +38,8 @@ export const springConfig = {
 }
 
 export const isSSR = () => typeof window === "undefined"
+
+export const getWidthHeight = (photo: UnsplashPhotoT) => {
+  let width = getWidth()
+  return { width, height: (photo.height / photo.width) * width }
+}

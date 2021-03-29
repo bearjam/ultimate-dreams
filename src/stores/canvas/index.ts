@@ -27,10 +27,8 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         )
         if (!item) return
         item.scale += action.payload.scaleDelta
-        console.log(item)
       })
     case "SELECT_ITEMS": {
-      console.log(action)
       return state
     }
     case "UPDATE_CANVAS":
@@ -46,7 +44,6 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
     case "ZOOM_CANVAS":
       return produce(state, (draft) => {
         draft.scale -= action.payload.scaleDelta / SCALE_QUOTIENT
-        console.log(draft.scale)
       })
     case "MOVE_ITEM":
       return produce(state, (draft) => {

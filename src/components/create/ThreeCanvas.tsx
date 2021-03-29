@@ -17,7 +17,6 @@ const Main = () => {
     map((item) => {
       switch (item.type) {
         case "IMAGE":
-          console.log(item.src)
           return (
             <Suspense key={item.id} fallback={null}>
               <ThreeCanvasImage item={item} />
@@ -34,7 +33,7 @@ const Main = () => {
 
 const ThreeCanvas = () => {
   return (
-    <Canvas className="bg-yellow-300 touch-action-none">
+    <Canvas orthographic className="bg-yellow-300 touch-action-none">
       <Main />
     </Canvas>
   )

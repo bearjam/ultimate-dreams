@@ -47,6 +47,8 @@ const PhotoBin = ({ onDispatch = () => {}, ...props }: Props) => {
                     insertCanvasImageItemAction({
                       id: photo.id,
                       src: photo.urls.regular,
+                      naturalWidth: photo.width,
+                      naturalHeight: photo.height,
                       ...getWidthHeight(photo),
                     })
                   )

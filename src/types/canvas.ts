@@ -26,6 +26,8 @@ export type CanvasItemBase = CanvasItemGeometry & {
 export type CanvasImageItem = CanvasItemBase & {
   type: "IMAGE"
   src: string
+  naturalWidth: number
+  naturalHeight: number
 }
 
 export type CanvasTextItem = CanvasItemBase & {

@@ -1167,10 +1167,10 @@ fluids@^0.2.2:
   resolved "https://registry.yarnpkg.com/fluids/-/fluids-0.2.8.tgz#96a0afe6f6db23a301e2022b0ec5e967be264ba6"
   integrity sha512-60W1IZZaIm7OeNKhlyxNgCqEt0t89ds+RODxiWy6BVgaolK1eXFCamIEmxdAx8o83XtuH1haIl5QkOX2nff9wA==
 
-fp-ts@^3.0.0-alpha.15:
-  version "3.0.0-alpha.15"
-  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-3.0.0-alpha.15.tgz#6a9a01bd11023823017b04d80d11867785360411"
-  integrity sha512-Nt9IOXVmMh0wvRHvJXWElTdg62s+G7/jzQLLQfIByeTanR3EJ8/bIP2iMBlrBnZmGkXz5zopKeE/saw8r1DqRA==
+fp-ts@^3.0.0-alpha.16:
+  version "3.0.0-alpha.16"
+  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-3.0.0-alpha.16.tgz#5469028497e5ef16a45abee5c7b8071d364bab81"
+  integrity sha512-4xeeo5EehTYQsHhtb2BzoWLgLB3CdIJgbUIzP8YUq43UxGc4cau8UUMcZ431zf5x8yeW3RtfM4B00WDPeUWXPQ==
 
 fraction.js@^4.0.13:
   version "4.0.13"

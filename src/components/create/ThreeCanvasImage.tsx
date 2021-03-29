@@ -1,13 +1,13 @@
+import { SCALE_QUOTIENT } from "lib/constants"
 import { springConfig } from "lib/util"
-import React, { useRef } from "react"
+import React, { Fragment } from "react"
 import { animated, to, useSpring } from "react-spring/three"
 import { useLoader, useThree } from "react-three-fiber"
 import { useGesture } from "react-use-gesture"
-import { FullGestureState } from "react-use-gesture/dist/types"
 import { useCanvasStore } from "stores/canvas"
 import * as THREE from "three"
-import { Mesh } from "three"
 import { CanvasImageItem, GestureHandlers } from "types/canvas"
+import ThreeResizeHandle from "./ThreeResizeHandle"
 
 type Props = { item: CanvasImageItem }
 
@@ -18,13 +18,9 @@ const ThreeCanvasImage = ({ item }: Props) => {
   ])
   const { mode } = state
 
-  const ref = useRef<Mesh>()
+  const { viewport, size } = useThree()
 
-  const {
-    viewport: { factor },
-  } = useThree()
-
-  const { src, width, height, translate, scale } = item
+  const { src, width, height } = item
 
   const texture = useLoader(THREE.TextureLoader, src)
 
@@ -34,27 +30,6 @@ const ThreeCanvasImage = ({ item }: Props) => {
     z: 0,
     config: springConfig,
   }))
-
-  const handlerZ = async ({
-    wheeling,
-    pinching,
-    movement: [_, z],
-    event,
-  }: FullGestureState<"pinch" | "wheel">) => {
-    event?.stopPropagation()
-    const { finished } = await set({ z: z / 10 })
-    console.log("am i pinch/wheel?")
-    if (!(wheeling || pinching)) {
-      dispatch({
-        type: "SCALE_ITEM",
-        payload: {
-          itemId: item.id,
-          scaleDelta: z / 10,
-        },
-      })
-      set({ z: 0, immediate: true })
-    }
-  }
 
   function getHandlers(): GestureHandlers {
     switch (mode) {
@@ -71,39 +46,75 @@ const ThreeCanvasImage = ({ item }: Props) => {
             }
           },
           onWheel: () => {},
-          onPinch: () => {},
         }
       case "SCALE":
         return {
           onDrag: () => {},
-          onWheel: handlerZ,
-          onPinch: handlerZ,
+          onWheel: async ({ wheeling, movement: [_, z], event }) => {
+            event?.stopPropagation()
+            const { finished } = await set({ z: z / SCALE_QUOTIENT })
+            if (!wheeling && finished) {
+              dispatch({
+                type: "SCALE_ITEM",
+                payload: {
+                  itemId: item.id,
+                  scaleDelta: z / SCALE_QUOTIENT,
+                },
+              })
+              set({ z: 0, immediate: true })
+            }
+          },
         }
       default:
         return {
           onDrag: () => {},
           onWheel: () => {},
-          onPinch: () => {},
         }
     }
   }
 
   const bind = useGesture(getHandlers(), {
-    transform: ([x, y]) => [x / factor, -y / factor],
+    transform: ([x, y]) => [x / viewport.factor, -y / viewport.factor],
   })
 
+  const position = to([x, y], (x, y) => [
+    item.translate.x + x,
+    item.translate.y + y,
+    0,
+  ])
+  const scale = to([z], (z) => [item.scale + z, item.scale + z, 1])
+
+  function modeChildren() {
+    switch (mode) {
+      case "SCALE":
+        return [...Array(4)].map((_, i) => (
+          <ThreeResizeHandle
+            key={i}
+            item={item}
+            ord={i}
+            position={position}
+            scale={scale}
+          />
+        ))
+      default:
+        return null
+    }
+  }
+
   return (
-    <animated.mesh
-      ref={ref}
-      // @ts-ignore
-      position={to([x, y], (x, y) => [translate.x + x, translate.y + y, 0])}
-      // @ts-ignore
-      scale={to([z], (z) => [item.scale + z, item.scale + z, 1])}
-      {...bind()}
-    >
-      <planeBufferGeometry args={[width / factor, height / factor]} />
-      <meshBasicMaterial map={texture} />
-    </animated.mesh>
+    <Fragment>
+      <animated.mesh
+        // @ts-ignore
+        position={position}
+        // @ts-ignore
+        scale={scale}
+        {...bind()}
+      >
+        <planeBufferGeometry args={[width, height]} />
+        <meshBasicMaterial map={texture} />
+      </animated.mesh>
+      {modeChildren()}
+    </Fragment>
   )
 }
 
