@@ -20,7 +20,7 @@
 }
 
 .threeCanvas {
-  /* @apply bg-red-500 opacity-50; */
+  @apply bg-red-500 opacity-50;
 }
 
 .assetTools {

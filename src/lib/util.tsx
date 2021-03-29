@@ -1,3 +1,5 @@
+import { Ord } from "fp-ts/number"
+import { clamp as fptsClamp } from "fp-ts/Ord"
 import { parseUrl } from "query-string"
 import { ReactNode, Suspense } from "react"
 import { UnsplashPhotoT } from "types/unsplash"
@@ -52,3 +54,5 @@ export const withSuspense = (Component: (props: any) => JSX.Element) => (
     <Component {...props} />
   </Suspense>
 )
+
+export const clamp = fptsClamp(Ord)

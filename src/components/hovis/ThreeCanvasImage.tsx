@@ -11,13 +11,10 @@ import { CanvasImageItem, GestureHandlers } from "types/canvas"
 type Props = { item: CanvasImageItem }
 
 const ThreeCanvasImage = ({ item }: Props) => {
-  const [state, dispatch] = useCanvasStore((store) => [
+  const [{ mode }, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
   ])
-  const { mode } = state
-
-  const { viewport } = useThree()
 
   const { src, width, height } = item
 
