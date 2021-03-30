@@ -8,23 +8,81 @@ import { Canvas as R3FCanvas } from "react-three-fiber"
 import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
 import { clamp } from "../../lib/util"
-import Camera from "./Camera"
-import css from "./index.module.css"
 import ThreeCanvasImage from "./ThreeCanvasImage"
 import ThreeCanvasText from "./ThreeCanvasText"
 
-const ThreeCanvas = () => {
-  const [{ items, width, height, scale }, dispatch] = useCanvasStore(
-    ({ state: { items, width, height, scale }, dispatch }) => [
+const ThreeBackdrop = () => {
+  const [state, dispatch] = useCanvasStore(
+    ({ state: { width, height, x, y, scale }, dispatch }) => [
       {
-        items,
         width,
         height,
+        x,
+        y,
         scale,
       },
       dispatch,
     ]
   )
+
+  const [{ x, y, wheelY }, set] = useSpring(() => ({
+    x: 0,
+    y: 0,
+    wheelY: 0,
+  }))
+
+  const zoomClamp = clamp(0.1, 1.5)
+
+  const bind = useGesture(
+    {
+      onWheel: async ({ wheeling, movement: [, movementY] }) => {
+        await set({ wheelY: movementY })
+        if (!wheeling) {
+          dispatch({
+            type: "UPDATE_CANVAS",
+            payload: {
+              scale: zoomClamp(state.scale - movementY / SCALE_QUOTIENT),
+            },
+          })
+          set({ wheelY: 0, immediate: true })
+        }
+      },
+      onDrag: async ({ down, movement: [x, y] }) => {
+        if (down) set({ x, y })
+        else {
+          await set({ x, y })
+          dispatch({
+            type: "PAN_CANVAS",
+            payload: {
+              dx: x,
+              dy: y,
+            },
+          })
+          set({ x: 0, y: 0, immediate: true })
+        }
+      },
+    },
+    {
+      transform: ([x, y]) => [x, -y],
+    }
+  )
+
+  const scale = to([wheelY], (my) =>
+    zoomClamp(state.scale - my / SCALE_QUOTIENT)
+  ).to((x) => [x, x, x])
+
+  const position = to([x, y], (x, y) => [state.x + x, state.y + y, 0])
+
+  return (
+    <animated.mesh scale={scale as any} position={position as any} {...bind()}>
+      <planeBufferGeometry args={[state.width, state.height]} />
+      <meshBasicMaterial color="green" />
+    </animated.mesh>
+  )
+}
+
+const ThreeCanvas = () => {
+  const items = useCanvasStore((store) => store.state.items)
 
   const children = pipe(
     items,
@@ -41,42 +99,11 @@ const ThreeCanvas = () => {
     })
   )
 
-  const [{ my }, set] = useSpring(() => ({
-    my: 0,
-  }))
-
-  const zoomClamp = clamp(0.1, 1.5)
-
-  const zoomBind = useGesture({
-    onWheel: async ({ wheeling, movement: [, my] }) => {
-      await set({ my })
-      if (!wheeling) {
-        dispatch({
-          type: "UPDATE_CANVAS",
-          payload: {
-            scale: clamp(0.1, 1.5)(scale - my / SCALE_QUOTIENT),
-          },
-        })
-        set({ my: 0, immediate: true })
-      }
-    },
-  })
-
-  console.log(`hard: ${scale}`)
-
-  const zoom = to([my], (my) => {
-    const next = zoomClamp(scale - my / SCALE_QUOTIENT)
-    console.log(`soft: ${next}`)
-    return next
-  })
-
   return (
-    <div className={css.threeCanvas} style={{ width, height }}>
-      <R3FCanvas orthographic {...zoomBind()}>
-        <Camera zoom={zoom} />
-        {children}
-      </R3FCanvas>
-    </div>
+    <R3FCanvas orthographic className="pointer-events-none">
+      <ThreeBackdrop />
+      {children}
+    </R3FCanvas>
   )
 }
 

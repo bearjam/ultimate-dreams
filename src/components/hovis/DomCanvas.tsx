@@ -1,6 +1,10 @@
+import { animated, to, useSpring } from "@react-spring/web"
 import { pipe } from "fp-ts/function"
 import { filter, filterWithIndex, map } from "fp-ts/ReadonlyArray"
+import { SCALE_QUOTIENT } from "lib/constants"
+import { clamp } from "lib/util"
 import React, { ReactNode } from "react"
+import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
 import DomCanvasImage from "./DomCanvasImage"
 import DomCanvasText from "./DomCanvasText"
@@ -11,18 +15,75 @@ type Props = {
 }
 
 const Canvas = ({ children }: Props) => {
-  const { width, height, scale } = useCanvasStore(
-    ({ state: { width, height, scale } }) => ({
-      width,
-      height,
-      scale,
-    })
+  const [state, dispatch] = useCanvasStore(
+    ({ state: { width, height, x, y, scale }, dispatch }) => [
+      {
+        width,
+        height,
+        x,
+        y,
+        scale,
+      },
+      dispatch,
+    ]
+  )
+
+  const [{ x, y, wheelY }, set] = useSpring(() => ({
+    wheelY: 0,
+    x: 0,
+    y: 0,
+  }))
+
+  const zoomClamp = clamp(0.1, 1.5)
+
+  const bind = useGesture(
+    {
+      onWheel: async ({ wheeling, movement: [, dy] }) => {
+        await set({ wheelY: dy })
+        if (!wheeling) {
+          dispatch({
+            type: "UPDATE_CANVAS",
+            payload: {
+              scale: zoomClamp(state.scale - dy / SCALE_QUOTIENT),
+            },
+          })
+          set({ wheelY: 0, immediate: true })
+        }
+      },
+      onDrag: async ({ down, movement: [x, y] }) => {
+        if (down) set({ x, y })
+        else {
+          await set({ x, y })
+          dispatch({
+            type: "PAN_CANVAS",
+            payload: {
+              dx: x,
+              dy: y,
+            },
+          })
+          set({ x: 0, y: 0, immediate: true })
+        }
+      },
+    },
+    {
+      transform: ([x, y]) => [x, -y],
+    }
   )
 
   return (
-    <div className={css.domCanvas} style={{ width, height }}>
+    <animated.div
+      className={css.domCanvas}
+      style={{
+        width: state.width,
+        height: state.height,
+        x: x.to((x) => state.x + x),
+        y: y.to((y) => -state.y - y),
+        scale: to([wheelY], (dy) => state.scale - dy / SCALE_QUOTIENT),
+      }}
+      {...bind()}
+    >
       {children}
-    </div>
+    </animated.div>
   )
 }
 

@@ -1,9 +1,9 @@
 import dynamic from "next/dynamic"
 import React from "react"
 import { NoopLayout } from "src/layouts"
-const HovisApp = dynamic(() => import("components/hovis"), { ssr: false })
+const TestApp = dynamic(() => import("components/TestApp"), { ssr: false })
 
-const Test = () => <HovisApp />
+const Test = () => <TestApp />
 
 Test.Layout = NoopLayout
 

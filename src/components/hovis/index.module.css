@@ -10,7 +10,7 @@
 }
 
 .domCanvas {
-  @apply bg-pink-300;
+  @apply bg-red-500;
   @apply overflow-hidden;
 }
 
@@ -20,7 +20,6 @@
 }
 
 .threeCanvas {
-  @apply bg-red-500 opacity-50;
 }
 
 .assetTools {
