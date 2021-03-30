@@ -1,17 +1,12 @@
 import React, { Fragment } from "react"
 import AssetTools from "./AssetTools"
-import CanvasContainer from "./CanvasContainer"
-import DomCanvas from "./DomCanvas"
-import ThreeCanvas from "./ThreeCanvas"
+import CanvasCommon from "./CanvasCommon"
 import TransformTools from "./TransformTools"
 
 const HovisApp = () => {
   return (
     <Fragment>
-      <CanvasContainer>
-        <DomCanvas />
-        <ThreeCanvas />
-      </CanvasContainer>
+      <CanvasCommon />
       <AssetTools />
       <TransformTools />
     </Fragment>
