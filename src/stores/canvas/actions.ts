@@ -11,7 +11,7 @@ export const insertCanvasTextItemAction = ({
   width = 100,
   height = 100,
   rotate = 0,
-  translate = { x: 0, y: 0 },
+  translate = [0, 0],
   scale = 1,
 }: Partial<Omit<CanvasTextItem, "type">>): InsertCanvasItemAction => ({
   type: "INSERT_ITEM",
@@ -39,8 +39,10 @@ export const insertCanvasImageItemAction = ({
   width,
   height,
   rotate = 0,
-  translate = { x: 0, y: 0 },
+  translate = [0, 0],
   scale = 1,
+  naturalWidth,
+  naturalHeight,
 }: InsertCanvasImageItemActionArgsT): InsertCanvasItemAction => ({
   type: "INSERT_ITEM",
   payload: {
@@ -52,5 +54,7 @@ export const insertCanvasImageItemAction = ({
     rotate,
     translate,
     scale,
+    naturalWidth,
+    naturalHeight,
   },
 })

@@ -4,19 +4,9 @@ import {
   NativeHandlers,
   UserHandlers,
 } from "react-use-gesture/dist/types"
+import { Transforms2D, Dimensions2D } from "./geometry"
 
-export type CanvasItemDimensions = {
-  width: number
-  height: number
-}
-
-export type CanvasItemTransforms = {
-  rotate: number
-  translate: XYCoord
-  scale: number
-}
-
-export type CanvasItemGeometry = CanvasItemDimensions & CanvasItemTransforms
+export type CanvasItemGeometry = Dimensions2D & Transforms2D
 
 export type CanvasItemBase = CanvasItemGeometry & {
   id: string
@@ -39,20 +29,12 @@ export type CanvasItemT = CanvasImageItem | CanvasTextItem
 
 export type CanvasMode = "SELECT" | "MOVE" | "SCALE" | "ROTATE" | "CROP"
 
-export type XYCoord = {
-  x: number
-  y: number
-}
-
-export type CanvasState = {
-  mode: CanvasMode
-  items: CanvasItemT[]
-  selectedItems: CanvasItemT[]
-  width: number
-  height: number
-  rotate: number
-  scale: number
-} & XYCoord
+export type CanvasState = Dimensions2D &
+  Transforms2D & {
+    mode: CanvasMode
+    items: CanvasItemT[]
+    selectedItems: CanvasItemT[]
+  }
 
 export type InsertCanvasItemAction = {
   type: "INSERT_ITEM"
@@ -87,8 +69,7 @@ export type MoveCanvasItemAction = {
 export type PanCanvasAction = {
   type: "PAN_CANVAS"
   payload: {
-    dx: number
-    dy: number
+    translate: [number, number]
   }
 }
 

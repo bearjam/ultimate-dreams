@@ -2,62 +2,33 @@ import { to } from "@react-spring/core"
 import { animated } from "@react-spring/three"
 import { pipe } from "fp-ts/function"
 import { filterWithIndex, map } from "fp-ts/ReadonlyArray"
-import { SCALE_QUOTIENT } from "lib/constants"
 import React from "react"
-import { SpringStartFn, SpringStopFn, SpringValue } from "react-spring"
 import { Canvas as R3FCanvas } from "react-three-fiber"
 import { useCanvasStore } from "stores/canvas"
-import { clamp } from "../../lib/util"
+import { CanvasProps } from "./CanvasCommon"
 import ThreeCanvasImage from "./ThreeCanvasImage"
 import ThreeCanvasText from "./ThreeCanvasText"
 
-type CanvasTransforms = { dx: number; dy: number; dz: number }
+const ThreeBackdrop = ({
+  canvasSpring: [{ scale: canvasScale, translate }],
+}: CanvasProps) => {
+  const { width, height } = useCanvasStore(({ state: { width, height } }) => ({
+    width,
+    height,
+  }))
 
-type Springify<T> = {
-  [K in keyof T]: SpringValue<T[K]>
-}
-
-type Props = {
-  spring: [
-    Springify<CanvasTransforms>,
-    SpringStartFn<CanvasTransforms>,
-    SpringStopFn<CanvasTransforms>
-  ]
-}
-
-const ThreeBackdrop = ({ spring }: Props) => {
-  const [{ dx, dy, dz }] = spring
-
-  const [state, dispatch] = useCanvasStore(
-    ({ state: { width, height, x, y, scale }, dispatch }) => [
-      {
-        width,
-        height,
-        x,
-        y,
-        scale,
-      },
-      dispatch,
-    ]
-  )
-
-  const zoomClamp = clamp(0.1, 1.5)
-
-  const scale = to([dz], (dz) =>
-    zoomClamp(state.scale - dz / SCALE_QUOTIENT)
-  ).to((v) => [v, v, v])
-
-  const position = to([dx, dy], (x, y) => [state.x + x, state.y + y, 0])
+  const position = to([translate], ([x, y]) => [x, -y, 0]) as any
+  const scale = canvasScale.to((v) => [v, v, 1]) as any
 
   return (
-    <animated.mesh scale={scale as any} position={position as any}>
-      <planeBufferGeometry args={[state.width, state.height]} />
-      <meshBasicMaterial transparent opacity={0} />
+    <animated.mesh scale={scale} position={position}>
+      <planeBufferGeometry args={[width, height]} />
+      <meshBasicMaterial color="blue" opacity={0.5} />
     </animated.mesh>
   )
 }
 
-const ThreeCanvas = ({ spring }: Props) => {
+const ThreeCanvas = ({ canvasSpring }: CanvasProps) => {
   const items = useCanvasStore((store) => store.state.items)
 
   const children = pipe(
@@ -77,7 +48,7 @@ const ThreeCanvas = ({ spring }: Props) => {
 
   return (
     <R3FCanvas orthographic className="pointer-events-none bg-transparent">
-      <ThreeBackdrop spring={spring} />
+      <ThreeBackdrop canvasSpring={canvasSpring} />
       {children}
     </R3FCanvas>
   )

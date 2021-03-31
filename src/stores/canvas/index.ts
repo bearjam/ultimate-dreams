@@ -1,7 +1,6 @@
 import { withUndoableReducer } from "@bearjam/tom"
 import { filter } from "fp-ts/ReadonlyArray"
 import produce from "immer"
-import { SCALE_QUOTIENT } from "lib/constants"
 import create from "zustand"
 import { persist } from "zustand/middleware"
 import { CanvasAction, CanvasItemT, CanvasState } from "../../types/canvas"
@@ -13,21 +12,12 @@ const initialState: CanvasState = {
   width: 800,
   height: 600,
   rotate: 0,
-  x: 0,
-  y: 0,
+  translate: [0, 0],
   scale: 0.5,
 }
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   switch (action.type) {
-    case "SCALE_ITEM":
-      return produce(state, (draft) => {
-        const item = draft.items.find(
-          (item) => item.id === action.payload.itemId
-        )
-        if (!item) return
-        item.scale += action.payload.scaleDelta
-      })
     case "SELECT_ITEMS": {
       return state
     }
@@ -36,23 +26,14 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         ...state,
         ...action.payload,
       }
-    case "PAN_CANVAS":
-      return produce(state, (draft) => {
-        draft.x += action.payload.dx
-        draft.y += action.payload.dy
-      })
-    case "ZOOM_CANVAS":
-      return produce(state, (draft) => {
-        draft.scale -= action.payload.scaleDelta / SCALE_QUOTIENT
-      })
     case "MOVE_ITEM":
       return produce(state, (draft) => {
         const item = draft.items.find(
           (item) => item.id === action.payload.itemId
         )
         if (item) {
-          item.translate.x += action.payload.dx
-          item.translate.y += action.payload.dy
+          item.translate[0] += action.payload.dx
+          item.translate[1] += action.payload.dy
         }
       })
     case "INSERT_ITEM":

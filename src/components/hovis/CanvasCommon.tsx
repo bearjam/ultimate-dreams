@@ -1,21 +1,27 @@
-import { HTMLProps } from "react"
-import css from "./index.module.css"
-import DomCanvas from "./DomCanvas"
-import ThreeCanvas from "./ThreeCanvas"
 import { useSpring } from "@react-spring/core"
+import { useCanvasStore } from "stores/canvas"
+import { FullSpring, Transforms2D } from "types/geometry"
+import DomCanvas from "./DomCanvas"
+import css from "./index.module.css"
+import ThreeCanvas from "./ThreeCanvas"
 
-type CanvasContainerProps = HTMLProps<HTMLDivElement>
+export type CanvasProps = {
+  canvasSpring: FullSpring<Transforms2D>
+}
 
-const CanvasCommon = ({ className, ...props }: CanvasContainerProps) => {
-  const spring = useSpring(() => ({
-    dx: 0,
-    dy: 0,
-    dz: 0,
+const CanvasCommon = () => {
+  const state = useCanvasStore(({ state: { rotate, translate, scale } }) => ({
+    rotate,
+    translate,
+    scale,
+  }))
+  const canvasSpring = useSpring<Transforms2D>(() => ({
+    ...state,
   }))
   return (
-    <div className={css.canvasContainer} {...props}>
-      <DomCanvas spring={spring} />
-      <ThreeCanvas spring={spring} />
+    <div className={css.canvasContainer}>
+      <DomCanvas canvasSpring={canvasSpring} />
+      <ThreeCanvas canvasSpring={canvasSpring} />
     </div>
   )
 }
