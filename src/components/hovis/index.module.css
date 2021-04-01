@@ -6,7 +6,7 @@
 
 .canvasContainer > * {
   @apply absolute;
-  @apply inset-0 m-auto;
+  @apply top-0 left-0;
 }
 
 .domCanvas {
@@ -16,7 +16,6 @@
 
 .domCanvasItem {
   position: absolute;
-  @apply inset-0 m-auto;
 }
 
 .threeCanvas {

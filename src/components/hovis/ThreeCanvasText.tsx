@@ -1,11 +1,13 @@
 import React from "react"
 import { Text } from "@react-three/drei"
 import { CanvasTextItem } from "types/canvas"
+import { CanvasProps } from "./CanvasCommon"
 
 type Props = {
   item: CanvasTextItem
-}
-const ThreeCanvasText = ({ item }: Props) => {
+} & CanvasProps
+
+const ThreeCanvasText = ({ item, canvasSpring }: Props) => {
   return <Text>{item.text}</Text>
 }
 

@@ -7,10 +7,11 @@ import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
 import * as THREE from "three"
 import { CanvasImageItem, GestureHandlers } from "types/canvas"
+import { CanvasProps } from "./CanvasCommon"
 
-type Props = { item: CanvasImageItem }
+type Props = { item: CanvasImageItem } & CanvasProps
 
-const ThreeCanvasImage = ({ item }: Props) => {
+const ThreeCanvasImage = ({ item, canvasSpring }: Props) => {
   const [{ mode }, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,

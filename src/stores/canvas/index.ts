@@ -9,11 +9,11 @@ const initialState: CanvasState = {
   mode: "SELECT",
   items: [],
   selectedItems: [],
-  width: 800,
-  height: 600,
+  width: 4000,
+  height: 4000,
   rotate: 0,
   translate: [0, 0],
-  scale: 0.5,
+  scale: 0.1,
 }
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {

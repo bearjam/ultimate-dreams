@@ -1,4 +1,5 @@
 import { useSpring } from "@react-spring/core"
+import useMeasure from "react-use-measure"
 import { useCanvasStore } from "stores/canvas"
 import { FullSpring, Transforms2D } from "types/geometry"
 import DomCanvas from "./DomCanvas"
@@ -18,9 +19,12 @@ const CanvasCommon = () => {
   const canvasSpring = useSpring<Transforms2D>(() => ({
     ...state,
   }))
+
+  // const [ref, bounds] = useMeasure()
+
   return (
     <div className={css.canvasContainer}>
-      <DomCanvas canvasSpring={canvasSpring} />
+      {/* <DomCanvas canvasSpring={canvasSpring} containerBounds={bounds} /> */}
       <ThreeCanvas canvasSpring={canvasSpring} />
     </div>
   )
