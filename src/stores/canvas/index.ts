@@ -28,9 +28,7 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         ...action.payload,
       }
     case "UPDATE_ITEM":
-      console.log(state.items, "prev")
-
-      const next = produce(state, (draft) => {
+      return produce(state, (draft) => {
         let { itemId: id, ...itemRest } = action.payload
         const i = draft.items.findIndex((item) => item.id === id)
         if (i !== -1) {
@@ -40,9 +38,6 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
           } as CanvasItemT
         }
       })
-      console.log(next, "next")
-
-      return next
     case "MOVE_ITEM":
       return produce(state, (draft) => {
         const item = draft.items.find(

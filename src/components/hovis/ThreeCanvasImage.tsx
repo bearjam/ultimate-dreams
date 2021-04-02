@@ -14,11 +14,8 @@ import { CanvasProps } from "./CanvasCommon"
 
 type Props = { item: CanvasImageItem } & CanvasProps
 
-const ThreeCanvasImage = ({
-  item,
-  canvasSpring: [canvasSpring, setCanvasSpring],
-}: Props) => {
-  const [{ mode }, dispatch] = useCanvasStore((store) => [
+const ThreeCanvasImage = ({ item }: Props) => {
+  const [{ mode, scale: canvasScale }, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
   ])
@@ -45,7 +42,7 @@ const ThreeCanvasImage = ({
         return {
           onDrag: async ({ down, movement, event }) => {
             event.stopPropagation()
-            const [dx, dy] = movement.map((v) => v / canvasSpring.scale.get())
+            const [dx, dy] = movement.map((v) => v / canvasScale)
             const next = pipe(
               translate,
               ([x, y]) => [x + dx, y + dy] as Vector2
@@ -69,7 +66,7 @@ const ThreeCanvasImage = ({
           onDrag: () => {},
           onWheel: async ({ wheeling, movement, event }) => {
             event.stopPropagation()
-            const wheelY = movement[1] / canvasSpring.scale.get()
+            const wheelY = movement[1] / canvasScale
             const next = clampScale(item.scale + wheelY / SCALE_QUOTIENT)
             if (wheeling) {
               setItemSpring({ scale: next })
@@ -115,21 +112,8 @@ const ThreeCanvasImage = ({
   return (
     <Fragment>
       <animated.mesh
-        position={
-          to(
-            [
-              canvasSpring.translate,
-              itemSpring.translate,
-              canvasSpring.scale,
-            ] as const,
-            ([x0, y0], [x1, y1], s) => [x0 + x1 * s, y0 + y1 * s]
-          ) as any
-        }
-        scale={
-          to([canvasSpring.scale, itemSpring.scale], (s0, s1) =>
-            replicate(s0 * s1)(3)
-          ) as any
-        }
+        position={to([itemSpring.translate], ([x0, y0]) => [x0, y0, 1]) as any}
+        scale={to([itemSpring.scale], (s0) => replicate(s0)(3)) as any}
         {...bind()}
       >
         <planeBufferGeometry args={[width, height]} />

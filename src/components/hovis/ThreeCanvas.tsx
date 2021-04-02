@@ -1,11 +1,9 @@
-import { to } from "@react-spring/core"
 import { animated } from "@react-spring/three"
 import { pipe } from "fp-ts/function"
-import { filterWithIndex, map } from "fp-ts/ReadonlyArray"
+import { map } from "fp-ts/ReadonlyArray"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp } from "lib/util"
-import React, { useEffect } from "react"
-import { Canvas as R3FCanvas, Vector3 } from "react-three-fiber"
+import React from "react"
 import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
 import theme from "tailwindcss/defaultTheme"
@@ -14,16 +12,13 @@ import { CanvasProps } from "./CanvasCommon"
 import ThreeCanvasImage from "./ThreeCanvasImage"
 import ThreeCanvasText from "./ThreeCanvasText"
 
-const ThreeBackdrop = ({
-  canvasSpring: [{ scale: canvasScale, translate }, set],
-}: CanvasProps) => {
-  const [state, dispatch] = useCanvasStore((store) => [
+const ThreeCanvas = ({ canvasSpring }: CanvasProps) => {
+  const [{ items, ...state }, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
   ])
 
-  const position = to([translate], ([x, y]) => [x, y, -1]) as any
-  const scale = canvasScale.to((v) => [v, v, 1]) as any
+  const [{ translate, scale }, set] = canvasSpring
 
   const clampScale = clamp(0.1, 1.5)
 
@@ -64,49 +59,40 @@ const ThreeBackdrop = ({
       transform: ([x, y]) => [x, -y],
     }
   )
-
   return (
-    <animated.mesh scale={scale} position={position} {...bind()}>
+    <animated.mesh
+      scale={scale.to((v) => [v, v, 1]) as any}
+      position={translate.to((x, y) => [x, y, 0]) as any}
+      {...bind()}
+    >
       <planeBufferGeometry args={[state.width, state.height]} />
       <meshBasicMaterial color={theme.colors.indigo[200]} opacity={1} />
+      {pipe(
+        items,
+        map((item) => {
+          switch (item.type) {
+            case "IMAGE":
+              return (
+                <ThreeCanvasImage
+                  key={item.id}
+                  item={item}
+                  canvasSpring={canvasSpring}
+                />
+              )
+            case "TEXT":
+              return (
+                <ThreeCanvasText
+                  key={item.id}
+                  item={item}
+                  canvasSpring={canvasSpring}
+                />
+              )
+            default:
+              return null
+          }
+        })
+      )}
     </animated.mesh>
-  )
-}
-
-const ThreeCanvas = ({ canvasSpring }: CanvasProps) => {
-  const items = useCanvasStore((store) => store.state.items)
-
-  const children = pipe(
-    items,
-    map((item) => {
-      switch (item.type) {
-        case "IMAGE":
-          return (
-            <ThreeCanvasImage
-              key={item.id}
-              item={item}
-              canvasSpring={canvasSpring}
-            />
-          )
-        case "TEXT":
-          return (
-            <ThreeCanvasText
-              key={item.id}
-              item={item}
-              canvasSpring={canvasSpring}
-            />
-          )
-        default:
-          return null
-      }
-    })
-  )
-
-  return (
-    <R3FCanvas orthographic>
-      <ThreeBackdrop canvasSpring={canvasSpring} />
-      {children}
-    </R3FCanvas>
   )
 }
 
