@@ -25,6 +25,7 @@
   @apply absolute;
   @apply bg-green-500;
   @apply border-4 border-black;
+  @apply mt-16;
 }
 
 .transformTools {

@@ -1,5 +1,6 @@
 import { withUndoableReducer } from "@bearjam/tom"
 import { filter } from "fp-ts/ReadonlyArray"
+import { filterWithIndex } from "fp-ts/ReadonlyRecord"
 import produce from "immer"
 import create from "zustand"
 import { persist } from "zustand/middleware"
@@ -26,6 +27,22 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         ...state,
         ...action.payload,
       }
+    case "UPDATE_ITEM":
+      console.log(state.items, "prev")
+
+      const next = produce(state, (draft) => {
+        let { itemId: id, ...itemRest } = action.payload
+        const i = draft.items.findIndex((item) => item.id === id)
+        if (i !== -1) {
+          draft.items[i] = {
+            ...draft.items[i],
+            ...itemRest,
+          } as CanvasItemT
+        }
+      })
+      console.log(next, "next")
+
+      return next
     case "MOVE_ITEM":
       return produce(state, (draft) => {
         const item = draft.items.find(

@@ -98,6 +98,13 @@ export type ScaleCanvasItemAction = {
   }
 }
 
+export type UpdateCanvasItemAction = {
+  type: "UPDATE_ITEM"
+  payload: {
+    itemId: string
+  } & Partial<CanvasItemT>
+}
+
 export type CanvasAction =
   | InsertCanvasItemAction
   | DeleteCanvasItemAction
@@ -108,6 +115,7 @@ export type CanvasAction =
   | ZoomCanvasAction
   | SelectItemsAction
   | ScaleCanvasItemAction
+  | UpdateCanvasItemAction
 
 export type CanvasStore = Dispatcher<CanvasState, CanvasAction> & Patcher
 

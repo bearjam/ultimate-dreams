@@ -16,9 +16,12 @@ const CanvasCommon = () => {
     translate,
     scale,
   }))
-  const canvasSpring = useSpring<Transforms2D>(() => ({
-    ...state,
-  }))
+  const canvasSpring = useSpring<Transforms2D>(
+    () => ({
+      ...state,
+    }),
+    [state]
+  )
 
   // const [ref, bounds] = useMeasure()
 

@@ -1,5 +1,7 @@
+import { pipe } from "fp-ts/function"
+import { replicate } from "fp-ts/ReadonlyArray"
 import { SCALE_QUOTIENT } from "lib/constants"
-import { springConfig, withSuspense } from "lib/util"
+import { clamp, springConfig, withSuspense } from "lib/util"
 import React, { Fragment, Suspense } from "react"
 import { to, animated, useSpring } from "react-spring/three"
 import { useLoader, useThree } from "react-three-fiber"
@@ -7,39 +9,57 @@ import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
 import * as THREE from "three"
 import { CanvasImageItem, GestureHandlers } from "types/canvas"
+import { Transforms2D, Vector2 } from "types/geometry"
 import { CanvasProps } from "./CanvasCommon"
 
 type Props = { item: CanvasImageItem } & CanvasProps
 
-const ThreeCanvasImage = ({ item, canvasSpring }: Props) => {
+const ThreeCanvasImage = ({
+  item,
+  canvasSpring: [canvasSpring, setCanvasSpring],
+}: Props) => {
   const [{ mode }, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
   ])
-
   const { src, width, height } = item
-
   const texture = useLoader(THREE.TextureLoader, src)
 
-  const [{ x, y, z }, set] = useSpring(() => ({
-    x: 0,
-    y: 0,
-    z: 0,
-    config: springConfig,
-  }))
+  const { rotate, translate, scale } = item
+
+  const [itemSpring, setItemSpring] = useSpring(
+    () => ({
+      rotate,
+      translate,
+      scale,
+      config: springConfig,
+    }),
+    [rotate, translate, scale]
+  )
+
+  const clampScale = clamp(0.1, 1.5)
 
   function getHandlers(): GestureHandlers {
     switch (mode) {
       case "MOVE":
         return {
-          onDrag: async ({ down, movement: [x, y] }) => {
-            const { finished } = await set({ x, y })
-            if (!down && finished) {
+          onDrag: async ({ down, movement, event }) => {
+            event.stopPropagation()
+            const [dx, dy] = movement.map((v) => v / canvasSpring.scale.get())
+            const next = pipe(
+              translate,
+              ([x, y]) => [x + dx, y + dy] as Vector2
+            )
+            if (down) setItemSpring({ translate: next })
+            else {
+              await setItemSpring({ translate: next })
               dispatch({
-                type: "MOVE_ITEM",
-                payload: { itemId: item.id, dx: x, dy: y },
+                type: "UPDATE_ITEM",
+                payload: {
+                  itemId: item.id,
+                  translate: next,
+                },
               })
-              set({ x: 0, y: 0, immediate: true })
             }
           },
           onWheel: () => {},
@@ -47,18 +67,21 @@ const ThreeCanvasImage = ({ item, canvasSpring }: Props) => {
       case "SCALE":
         return {
           onDrag: () => {},
-          onWheel: async ({ wheeling, movement: [_, z], event }) => {
-            event?.stopPropagation()
-            const { finished } = await set({ z: z / SCALE_QUOTIENT })
-            if (!wheeling && finished) {
+          onWheel: async ({ wheeling, movement, event }) => {
+            event.stopPropagation()
+            const wheelY = movement[1] / canvasSpring.scale.get()
+            const next = clampScale(item.scale + wheelY / SCALE_QUOTIENT)
+            if (wheeling) {
+              setItemSpring({ scale: next })
+            } else {
+              await setItemSpring({ scale: next })
               dispatch({
-                type: "SCALE_ITEM",
+                type: "UPDATE_ITEM",
                 payload: {
                   itemId: item.id,
-                  scaleDelta: z / SCALE_QUOTIENT,
+                  scale: next,
                 },
               })
-              set({ z: 0, immediate: true })
             }
           },
         }
@@ -73,13 +96,6 @@ const ThreeCanvasImage = ({ item, canvasSpring }: Props) => {
   const bind = useGesture(getHandlers(), {
     transform: ([x, y]) => [x, -y],
   })
-
-  const position = to([x, y], (x, y) => [
-    item.translate.x + x,
-    item.translate.y + y,
-    0,
-  ])
-  const scale = to([z], (z) => [item.scale + z, item.scale + z, 1])
 
   function modeChildren() {
     // switch (mode) {
@@ -99,8 +115,21 @@ const ThreeCanvasImage = ({ item, canvasSpring }: Props) => {
   return (
     <Fragment>
       <animated.mesh
-        position={position as any}
-        scale={scale as any}
+        position={
+          to(
+            [
+              canvasSpring.translate,
+              itemSpring.translate,
+              canvasSpring.scale,
+            ] as const,
+            ([x0, y0], [x1, y1], s) => [x0 + x1 * s, y0 + y1 * s]
+          ) as any
+        }
+        scale={
+          to([canvasSpring.scale, itemSpring.scale], (s0, s1) =>
+            replicate(s0 * s1)(3)
+          ) as any
+        }
         {...bind()}
       >
         <planeBufferGeometry args={[width, height]} />

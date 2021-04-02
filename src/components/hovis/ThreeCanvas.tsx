@@ -5,7 +5,7 @@ import { filterWithIndex, map } from "fp-ts/ReadonlyArray"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp } from "lib/util"
 import React, { useEffect } from "react"
-import { Canvas as R3FCanvas } from "react-three-fiber"
+import { Canvas as R3FCanvas, Vector3 } from "react-three-fiber"
 import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
 import theme from "tailwindcss/defaultTheme"
@@ -22,43 +22,48 @@ const ThreeBackdrop = ({
     store.dispatch,
   ])
 
-  const position = to([translate], ([x, y]) => [x, -y, 0]) as any
+  const position = to([translate], ([x, y]) => [x, y, -1]) as any
   const scale = canvasScale.to((v) => [v, v, 1]) as any
 
   const clampScale = clamp(0.1, 1.5)
 
-  const bind = useGesture({
-    onWheel: async ({ wheeling, movement: [, wheelY] }) => {
-      const next = clampScale(state.scale - wheelY / SCALE_QUOTIENT)
-      if (wheeling) {
-        set({ scale: next })
-      } else {
-        await set({ scale: next })
-        dispatch({
-          type: "UPDATE_CANVAS",
-          payload: {
-            scale: next,
-          },
-        })
-      }
+  const bind = useGesture(
+    {
+      onWheel: async ({ wheeling, movement: [, wheelY] }) => {
+        const next = clampScale(state.scale + wheelY / SCALE_QUOTIENT)
+        if (wheeling) {
+          set({ scale: next })
+        } else {
+          await set({ scale: next })
+          dispatch({
+            type: "UPDATE_CANVAS",
+            payload: {
+              scale: next,
+            },
+          })
+        }
+      },
+      onDrag: async ({ down, movement: [dx, dy] }) => {
+        const next = pipe(
+          state.translate,
+          ([x, y]) => [x + dx, y + dy] as Vector2
+        )
+        if (down) set({ translate: next })
+        else {
+          await set({ translate: next })
+          dispatch({
+            type: "UPDATE_CANVAS",
+            payload: {
+              translate: next,
+            },
+          })
+        }
+      },
     },
-    onDrag: async ({ down, movement: [dx, dy] }) => {
-      const next = pipe(
-        state.translate,
-        ([x, y]) => [x + dx, y + dy] as Vector2
-      )
-      if (down) set({ translate: next })
-      else {
-        await set({ translate: next })
-        dispatch({
-          type: "UPDATE_CANVAS",
-          payload: {
-            translate: next,
-          },
-        })
-      }
-    },
-  })
+    {
+      transform: ([x, y]) => [x, -y],
+    }
+  )
 
   return (
     <animated.mesh scale={scale} position={position} {...bind()}>
@@ -73,7 +78,6 @@ const ThreeCanvas = ({ canvasSpring }: CanvasProps) => {
 
   const children = pipe(
     items,
-    filterWithIndex((i) => i % 2 === 1),
     map((item) => {
       switch (item.type) {
         case "IMAGE":
