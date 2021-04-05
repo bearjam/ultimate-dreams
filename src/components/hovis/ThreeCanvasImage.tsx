@@ -2,15 +2,16 @@ import { pipe } from "fp-ts/function"
 import { replicate } from "fp-ts/ReadonlyArray"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
-import React, { Fragment, Suspense } from "react"
-import { to, animated, useSpring } from "react-spring/three"
-import { useLoader, useThree } from "react-three-fiber"
+import React, { Fragment } from "react"
+import { animated, to, useSpring } from "react-spring/three"
+import { useLoader } from "react-three-fiber"
 import { useGesture } from "react-use-gesture"
 import { useCanvasStore } from "stores/canvas"
 import * as THREE from "three"
 import { CanvasImageItem, GestureHandlers } from "types/canvas"
-import { Transforms2D, Vector2 } from "types/geometry"
+import { Vector2 } from "types/geometry"
 import { CanvasProps } from "./CanvasCommon"
+import ThreeVertexHandle from "./ThreeVertexHandle"
 
 type Props = { item: CanvasImageItem } & CanvasProps
 
@@ -95,32 +96,34 @@ const ThreeCanvasImage = ({ item }: Props) => {
   })
 
   function modeChildren() {
-    // switch (mode) {
-    //   case "SCALE":
-    //     return [...Array(4)].map((_, i) => (
-    //       <ThreeResizeHandle
-    //         key={i}
-    //         item={item}
-    //         ord={i}
-    //         position={position}
-    //         scale={scale}
-    //       />
-    //     ))
-    // }
+    const [dx, dy] = [width / 2, height / 2]
+    switch (mode) {
+      case "CROP":
+      default:
+      case "MOVE":
+        return (
+          <Fragment>
+            <ThreeVertexHandle position={[dx, dy, 0]} {...bind({
+              xx: 
+            })} />
+            <ThreeVertexHandle position={[-dx, dy, 0]} />
+            <ThreeVertexHandle position={[dx, -dy, 0]} />
+            <ThreeVertexHandle position={[-dx, -dy, 0]} />
+          </Fragment>
+        )
+    }
   }
 
   return (
-    <Fragment>
-      <animated.mesh
-        position={to([itemSpring.translate], ([x0, y0]) => [x0, y0, 1]) as any}
-        scale={to([itemSpring.scale], (s0) => replicate(s0)(3)) as any}
-        {...bind()}
-      >
-        <planeBufferGeometry args={[width, height]} />
-        <meshBasicMaterial map={texture} />
-      </animated.mesh>
-      {modeChildren()}
-    </Fragment>
+    <animated.mesh
+      position={to([itemSpring.translate], ([x0, y0]) => [x0, y0, 1]) as any}
+      scale={to([itemSpring.scale], (s0) => replicate(s0)(3)) as any}
+      {...bind()}
+    >
+      <planeBufferGeometry args={[width, height]} />
+      <meshBasicMaterial map={texture} />
+      <group position-z={2}>{modeChildren()}</group>
+    </animated.mesh>
   )
 }
 
