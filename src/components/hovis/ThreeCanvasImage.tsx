@@ -1,16 +1,17 @@
 import { pipe } from "fp-ts/function"
-import { replicate } from "fp-ts/ReadonlyArray"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
 import React, { Fragment } from "react"
 import { animated, to, useSpring } from "react-spring/three"
 import { useLoader } from "react-three-fiber"
-import { useGesture } from "react-use-gesture"
+import { useDrag, useGesture } from "react-use-gesture"
+import { FullGestureState } from "react-use-gesture/dist/types"
 import { useCanvasStore } from "stores/canvas"
 import * as THREE from "three"
 import { CanvasImageItem, GestureHandlers } from "types/canvas"
 import { Vector2 } from "types/geometry"
 import { CanvasProps } from "./CanvasCommon"
+import ThreeEdgeHandle from "./ThreeEdgeHandle"
 import ThreeVertexHandle from "./ThreeVertexHandle"
 
 type Props = { item: CanvasImageItem } & CanvasProps
@@ -91,37 +92,90 @@ const ThreeCanvasImage = ({ item }: Props) => {
     }
   }
 
-  const bind = useGesture(getHandlers(), {
+  const itemBind = useGesture(getHandlers(), {
     transform: ([x, y]) => [x, -y],
   })
+
+  const handleBind = useDrag(
+    (state) =>
+      // @ts-ignore
+      void pipe(state, ...state.args),
+    { transform: ([x, y]) => [x, -y] }
+  )
 
   function modeChildren() {
     const [dx, dy] = [width / 2, height / 2]
     switch (mode) {
-      case "CROP":
       default:
-      case "MOVE":
+      case "SCALE": {
+        const op = (xmult: number, ymult: number) => async ({
+          movement: [mx, my],
+          event,
+          down,
+        }: FullGestureState<"drag">) => {
+          event?.stopPropagation()
+          const next =
+            scale +
+            (xmult * mx + ymult * my) / 2 / ((width + height) / 2) / canvasScale
+          if (down) {
+            setItemSpring({ scale: next })
+          } else {
+            await setItemSpring({ scale: next })
+            dispatch({
+              type: "UPDATE_ITEM",
+              payload: {
+                itemId: item.id,
+                scale: next,
+              },
+            })
+          }
+        }
+
         return (
           <Fragment>
-            <ThreeVertexHandle position={[dx, dy, 0]} {...bind({
-              xx: 
-            })} />
-            <ThreeVertexHandle position={[-dx, dy, 0]} />
-            <ThreeVertexHandle position={[dx, -dy, 0]} />
-            <ThreeVertexHandle position={[-dx, -dy, 0]} />
+            <ThreeVertexHandle
+              position={[dx, dy, 0]}
+              {...handleBind(op(1, 1))}
+            />
+            <ThreeVertexHandle
+              position={[-dx, dy, 0]}
+              {...handleBind(op(-1, 1))}
+            />
+            <ThreeVertexHandle
+              position={[dx, -dy, 0]}
+              {...handleBind(op(1, -1))}
+            />
+            <ThreeVertexHandle
+              position={[-dx, -dy, 0]}
+              {...handleBind(op(-1, -1))}
+            />
           </Fragment>
         )
+      }
+      case "CROP": {
+        return (
+          <Fragment>
+            <ThreeEdgeHandle position={[0, dy, 0]} />
+            <ThreeEdgeHandle position={[dx, 0, 0]} />
+            <ThreeEdgeHandle position={[0, -dy, 0]} />
+            <ThreeEdgeHandle position={[-dx, 0, 0]} />
+          </Fragment>
+        )
+      }
     }
   }
 
   return (
     <animated.mesh
       position={to([itemSpring.translate], ([x0, y0]) => [x0, y0, 1]) as any}
-      scale={to([itemSpring.scale], (s0) => replicate(s0)(3)) as any}
-      {...bind()}
+      scale={to([itemSpring.scale], (s0) => [s0, s0, 1]) as any}
+      {...itemBind()}
     >
       <planeBufferGeometry args={[width, height]} />
-      <meshBasicMaterial map={texture} />
+      <meshBasicMaterial
+        map={texture}
+        clippingPlanes={[new THREE.Plane(new THREE.Vector3(500, 500, 1))]}
+      />
       <group position-z={2}>{modeChildren()}</group>
     </animated.mesh>
   )

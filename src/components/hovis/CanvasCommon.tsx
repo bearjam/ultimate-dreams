@@ -29,7 +29,7 @@ const CanvasCommon = () => {
   return (
     <div className={css.canvasContainer}>
       {/* <DomCanvas canvasSpring={canvasSpring} containerBounds={bounds} /> */}
-      <R3FCanvas orthographic>
+      <R3FCanvas orthographic gl={{ logarithmicDepthBuffer: true }}>
         <ThreeCanvas canvasSpring={canvasSpring} />
       </R3FCanvas>
     </div>

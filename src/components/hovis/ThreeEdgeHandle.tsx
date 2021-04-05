@@ -1,12 +1,17 @@
-import { animated } from "@react-spring/three"
 import React from "react"
+import { MeshProps } from "react-three-fiber"
 
-const ThreeEdgeHandle = () => {
+type Props = MeshProps & {
+  width?: number
+  height?: number
+}
+
+const ThreeEdgeHandle = ({ width = 100, height = 100, ...props }: Props) => {
   return (
-    <animated.mesh position-z={2}>
-      <planeBufferGeometry args={[100, 100]} />
+    <mesh {...props}>
+      <planeBufferGeometry args={[width, height]} />
       <meshBasicMaterial color="green" />
-    </animated.mesh>
+    </mesh>
   )
 }
 
