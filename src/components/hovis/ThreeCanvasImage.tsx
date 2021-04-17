@@ -106,7 +106,6 @@ const ThreeCanvasImage = ({ item }: Props) => {
   function modeChildren() {
     const [dx, dy] = [width / 2, height / 2]
     switch (mode) {
-      default:
       case "SCALE": {
         const op = (xmult: number, ymult: number) => async ({
           movement: [mx, my],
@@ -114,9 +113,13 @@ const ThreeCanvasImage = ({ item }: Props) => {
           down,
         }: FullGestureState<"drag">) => {
           event?.stopPropagation()
-          const next =
+          const next = clampScale(
             scale +
-            (xmult * mx + ymult * my) / 2 / ((width + height) / 2) / canvasScale
+              (xmult * mx + ymult * my) /
+                2 /
+                ((width + height) / 2) /
+                canvasScale
+          )
           if (down) {
             setItemSpring({ scale: next })
           } else {
@@ -162,6 +165,8 @@ const ThreeCanvasImage = ({ item }: Props) => {
           </Fragment>
         )
       }
+      default:
+        return null
     }
   }
 
@@ -172,10 +177,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
       {...itemBind()}
     >
       <planeBufferGeometry args={[width, height]} />
-      <meshBasicMaterial
-        map={texture}
-        clippingPlanes={[new THREE.Plane(new THREE.Vector3(500, 500, 1))]}
-      />
+      <meshBasicMaterial map={texture} />
       <group position-z={2}>{modeChildren()}</group>
     </animated.mesh>
   )
