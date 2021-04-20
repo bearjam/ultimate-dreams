@@ -11,8 +11,10 @@ export const CropImageMaterial = shaderMaterial(
     u_image: new THREE.Texture(),
     u_inset: new THREE.Vector4(0, 0, 0, 0),
   },
-  glsl(vertexShader),
-  glsl(fragmentShader)
+  // glsl(vertexShader),
+  // glsl(fragmentShader)
+  vertexShader,
+  fragmentShader
 )
 
 extend({ CropImageMaterial })
@@ -38,4 +40,3 @@ declare global {
 export const AnimatedCropImageMaterial = animated(
   (props: CropImageMaterialProps) => <cropImageMaterial {...props} />
 )
-export default CropImageMaterial

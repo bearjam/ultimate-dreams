@@ -7,7 +7,7 @@ type Props = {
   item: CanvasTextItem
 } & CanvasProps
 
-const ThreeCanvasText = ({ item, canvasSpring }: Props) => {
+const ThreeCanvasText = ({ item }: Props) => {
   return <Text>{item.text}</Text>
 }
 

@@ -61,8 +61,12 @@ const ThreeCanvas = ({ canvasSpring }: CanvasProps) => {
   )
   return (
     <animated.mesh
-      scale={scale.to((v) => [v, v, 1]) as any}
-      position={translate.to((x, y) => [x, y, 0]) as any}
+      position-x={translate.to((x) => x)}
+      position-y={translate.to((_x, y) => y)}
+      position-z={0}
+      scale-x={scale}
+      scale-y={scale}
+      scale-z={1}
       {...(bind() as any)}
     >
       <planeBufferGeometry args={[state.width, state.height]} />

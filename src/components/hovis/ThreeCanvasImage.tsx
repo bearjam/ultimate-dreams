@@ -1,7 +1,8 @@
 import { animated, to, useSpring } from "@react-spring/three"
-import { useLoader } from "@react-three/fiber"
+import { useLoader, useThree } from "@react-three/fiber"
 import { AnimatedCropImageMaterial } from "components/materials/CropImageMaterial"
 import { pipe } from "fp-ts/function"
+import { map } from "fp-ts/ReadonlyArray"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
 import React, { Fragment } from "react"
@@ -15,6 +16,8 @@ import { CanvasProps } from "./CanvasCommon"
 import ThreeEdgeHandle from "./ThreeEdgeHandle"
 import ThreeVertexHandle from "./ThreeVertexHandle"
 
+const AnimatedEdgeHandle = animated(ThreeEdgeHandle)
+
 type Props = { item: CanvasImageItem } & CanvasProps
 
 const ThreeCanvasImage = ({ item }: Props) => {
@@ -24,6 +27,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
   ])
   const { src, width, height } = item
   const texture = useLoader(THREE.TextureLoader, src)
+  const { factor } = useThree((x) => x.viewport)
 
   const { rotate, translate, scale } = item
 
@@ -104,6 +108,10 @@ const ThreeCanvasImage = ({ item }: Props) => {
     { transform: ([x, y]) => [x, -y] }
   )
 
+  const [{ inset }, setInset] = useSpring(() => ({
+    inset: [0, 0, 0, 0],
+  }))
+
   function modeChildren() {
     const [dx, dy] = [width / 2, height / 2]
     switch (mode) {
@@ -157,12 +165,35 @@ const ThreeCanvasImage = ({ item }: Props) => {
         )
       }
       case "CROP": {
+        const op = () => async ({
+          movement,
+          event,
+          down,
+        }: FullGestureState<"drag">) => {
+          event?.stopPropagation()
+          // console.log(my, factor, canvasScale, height)
+          const [mx, my] = pipe(
+            movement,
+            map((v) => v / item.scale / canvasScale),
+            ([x, y]) => [x / item.width, y / item.height]
+          )
+          console.log(my)
+          // here
+        }
         return (
           <Fragment>
-            <ThreeEdgeHandle position={[0, dy, 0]} />
-            <ThreeEdgeHandle position={[dx, 0, 0]} />
-            <ThreeEdgeHandle position={[0, -dy, 0]} />
-            <ThreeEdgeHandle position={[-dx, 0, 0]} />
+            <AnimatedEdgeHandle
+              // position={[0, dy, 0]}
+              // position-x={inset.to((x, y, z, w) => w - y)}
+              position-x={0}
+              position-y={inset.to((t) => dy - t)}
+              // position-y={dy}
+              position-z={0}
+              {...(handleBind(op()) as any)}
+            />
+            <AnimatedEdgeHandle position={[dx, 0, 0]} />
+            <AnimatedEdgeHandle position={[0, -dy, 0]} />
+            <AnimatedEdgeHandle position={[-dx, 0, 0]} />
           </Fragment>
         )
       }
@@ -173,19 +204,22 @@ const ThreeCanvasImage = ({ item }: Props) => {
 
   return (
     <animated.mesh
-      position={to([itemSpring.translate], ([x0, y0]) => [x0, y0, 1]) as any}
-      scale={to([itemSpring.scale], (s0) => [s0, s0, 1]) as any}
+      position-x={itemSpring.translate.to((x) => x)}
+      position-y={itemSpring.translate.to((_x, y) => y)}
+      position-z={1}
+      scale-x={itemSpring.scale}
+      scale-y={itemSpring.scale}
+      scale-z={1}
       {...(itemBind() as any)}
     >
       <planeBufferGeometry args={[width, height]} />
-      <meshBasicMaterial
-        // attachArray="material"
-        map={texture}
-        visible={mode !== "CROP"}
-      />
+      {/* <meshBasicMaterial map={texture} visible={mode !== "CROP"} /> */}
       <AnimatedCropImageMaterial
         uniforms-u_image-value={texture}
-        uniforms-u_inset-value={new THREE.Vector4(0.0, 0.0, 0.0, 0.0)}
+        uniforms-u_inset-value-x={inset.to((x) => x)}
+        uniforms-u_inset-value-y={inset.to((_x, y) => y)}
+        uniforms-u_inset-value-z={inset.to((_x, _y, z) => z)}
+        uniforms-u_inset-value-w={inset.to((_x, _y, _z, w) => w)}
         visible={mode === "CROP"}
       />
       <group position-z={2}>{modeChildren()}</group>
