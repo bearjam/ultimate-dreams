@@ -1,9 +1,10 @@
+import { animated, to, useSpring } from "@react-spring/three"
+import { useLoader } from "@react-three/fiber"
+import { AnimatedCropImageMaterial } from "components/materials/CropImageMaterial"
 import { pipe } from "fp-ts/function"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
 import React, { Fragment } from "react"
-import { animated, to, useSpring } from "react-spring/three"
-import { useLoader } from "react-three-fiber"
 import { useDrag, useGesture } from "react-use-gesture"
 import { FullGestureState } from "react-use-gesture/dist/types"
 import { useCanvasStore } from "stores/canvas"
@@ -138,19 +139,19 @@ const ThreeCanvasImage = ({ item }: Props) => {
           <Fragment>
             <ThreeVertexHandle
               position={[dx, dy, 0]}
-              {...handleBind(op(1, 1))}
+              {...(handleBind(op(1, 1)) as any)}
             />
             <ThreeVertexHandle
               position={[-dx, dy, 0]}
-              {...handleBind(op(-1, 1))}
+              {...(handleBind(op(-1, 1)) as any)}
             />
             <ThreeVertexHandle
               position={[dx, -dy, 0]}
-              {...handleBind(op(1, -1))}
+              {...(handleBind(op(1, -1)) as any)}
             />
             <ThreeVertexHandle
               position={[-dx, -dy, 0]}
-              {...handleBind(op(-1, -1))}
+              {...(handleBind(op(-1, -1)) as any)}
             />
           </Fragment>
         )
@@ -174,10 +175,19 @@ const ThreeCanvasImage = ({ item }: Props) => {
     <animated.mesh
       position={to([itemSpring.translate], ([x0, y0]) => [x0, y0, 1]) as any}
       scale={to([itemSpring.scale], (s0) => [s0, s0, 1]) as any}
-      {...itemBind()}
+      {...(itemBind() as any)}
     >
       <planeBufferGeometry args={[width, height]} />
-      <meshBasicMaterial map={texture} />
+      <meshBasicMaterial
+        // attachArray="material"
+        map={texture}
+        visible={mode !== "CROP"}
+      />
+      <AnimatedCropImageMaterial
+        uniforms-u_image-value={texture}
+        uniforms-u_inset-value={new THREE.Vector4(0.0, 0.0, 0.0, 0.0)}
+        visible={mode === "CROP"}
+      />
       <group position-z={2}>{modeChildren()}</group>
     </animated.mesh>
   )

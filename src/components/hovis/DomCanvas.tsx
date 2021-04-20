@@ -63,12 +63,14 @@ const Canvas = ({ children, canvasSpring }: PropsWithChildren<CanvasProps>) => {
   return (
     <animated.div
       className={css.domCanvas}
-      style={{
-        width,
-        height,
-        translate,
-        scale,
-      }}
+      style={
+        {
+          width,
+          height,
+          translate,
+          scale,
+        } as any
+      }
       {...bind()}
     >
       {children}

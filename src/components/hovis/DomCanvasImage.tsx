@@ -59,8 +59,8 @@ const DomCanvasImage = ({ item }: Props) => {
       style={{
         width,
         height,
-        x: x.to((x) => item.translate.x + x),
-        y: y.to((y) => item.translate.y + y),
+        x: x.to((x) => item.translate[0] + x),
+        y: y.to((y) => item.translate[1] + y),
         scale: z.to((z) => item.scale - z / SCALE_QUOTIENT),
       }}
       {...bind()}

@@ -23,8 +23,7 @@ export const useCenterElement = <T extends HTMLElement = HTMLDivElement>(
     dispatch({
       type: "PAN_CANVAS",
       payload: {
-        dx: -1 * (currentX - targetX),
-        dy: -1 * (currentY - targetY),
+        translate: [currentX - targetX, -1 * (currentY - targetY)],
       },
     })
   }

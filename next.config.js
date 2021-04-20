@@ -2,7 +2,7 @@ const withPlugins = require("next-compose-plugins")
 
 const conf = {
   webpack: (config) => {
-    config.module.rules.push([
+    config.module.rules.push(
       {
         test: /react-spring/,
         sideEffects: true,
@@ -11,9 +11,8 @@ const conf = {
         test: /\.(glsl)$/,
         exclude: /node_modules/,
         use: ["raw-loader", "glslify-loader"],
-      },
-    ])
-
+      }
+    )
     return config
   },
   images: {

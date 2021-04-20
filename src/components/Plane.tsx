@@ -1,6 +1,6 @@
 import { animated, useSpring } from "@react-spring/three"
 import { Fragment } from "react"
-import { Color, useThree } from "react-three-fiber"
+import { Color, useThree } from "@react-three/fiber"
 import { useGesture } from "react-use-gesture"
 import { CanvasMode, GestureHandlers } from "types/canvas"
 
@@ -55,7 +55,7 @@ const Plane = ({ mode, width, height, color }: PlaneProps) => {
   }
   return (
     <Fragment>
-      <animated.mesh {...bind()}>
+      <animated.mesh {...(bind() as any)}>
         <planeBufferGeometry args={[width, height]} />
         <meshBasicMaterial color={color} />
       </animated.mesh>

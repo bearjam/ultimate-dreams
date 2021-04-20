@@ -1,6 +1,6 @@
 import { animated } from "@react-spring/three"
 import React, { useLayoutEffect } from "react"
-import { useThree } from "react-three-fiber"
+import { useThree } from "@react-three/fiber"
 
 type Props = {
   zoom: number

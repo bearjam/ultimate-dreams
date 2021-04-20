@@ -1,6 +1,5 @@
-import { animated } from "@react-spring/three"
+import { MeshProps } from "@react-three/fiber"
 import React from "react"
-import { MeshProps } from "react-three-fiber"
 
 type Props = MeshProps & {
   width?: number

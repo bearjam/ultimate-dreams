@@ -63,7 +63,7 @@ const ThreeCanvas = ({ canvasSpring }: CanvasProps) => {
     <animated.mesh
       scale={scale.to((v) => [v, v, 1]) as any}
       position={translate.to((x, y) => [x, y, 0]) as any}
-      {...bind()}
+      {...(bind() as any)}
     >
       <planeBufferGeometry args={[state.width, state.height]} />
       <meshBasicMaterial color={theme.colors.indigo[200]} opacity={1} />

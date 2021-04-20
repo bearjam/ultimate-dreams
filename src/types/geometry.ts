@@ -1,5 +1,4 @@
-import { SpringValue } from "@react-spring/core"
-import { SpringStartFn, SpringStopFn } from "react-spring"
+import { SpringRef, SpringValue, SpringValues } from "@react-spring/core"
 
 export type Dimensions2D = {
   width: number
@@ -22,4 +21,6 @@ export type Springify<T> = {
 
 export type Transforms2DSpring = Springify<Transforms2D>
 
-export type FullSpring<T> = [Springify<T>, SpringStartFn<T>, SpringStopFn<T>]
+export type FullSpring<T> = [SpringValues<T>, SpringRef<T>]
+// | [Springify<T>, SpringStartFn<T>]
+// | [Springify<T>, SpringStartFn<T>, SpringStopFn<T>]

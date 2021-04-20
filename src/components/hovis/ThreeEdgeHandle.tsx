@@ -1,5 +1,5 @@
 import React from "react"
-import { MeshProps } from "react-three-fiber"
+import { MeshProps } from "@react-three/fiber"
 
 type Props = MeshProps & {
   width?: number
