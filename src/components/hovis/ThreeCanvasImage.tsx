@@ -3,6 +3,7 @@ import { useLoader, useThree } from "@react-three/fiber"
 import { AnimatedCropImageMaterial } from "components/materials/CropImageMaterial"
 import { pipe } from "fp-ts/function"
 import { map } from "fp-ts/ReadonlyArray"
+import produce from "immer"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
 import React, { Fragment } from "react"
@@ -31,7 +32,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
 
   const { rotate, translate, scale } = item
 
-  const [itemSpring, setItemSpring] = useSpring(
+  const [itemSpring, itemSpringApi] = useSpring(
     () => ({
       rotate,
       translate,
@@ -54,9 +55,10 @@ const ThreeCanvasImage = ({ item }: Props) => {
               translate,
               ([x, y]) => [x + dx, y + dy] as Vector2
             )
-            if (down) setItemSpring({ translate: next })
+            console.log(next)
+            if (down) itemSpringApi.start({ translate: next })
             else {
-              await setItemSpring({ translate: next })
+              await itemSpringApi.start({ translate: next })
               dispatch({
                 type: "UPDATE_ITEM",
                 payload: {
@@ -76,9 +78,9 @@ const ThreeCanvasImage = ({ item }: Props) => {
             const wheelY = movement[1] / canvasScale
             const next = clampScale(item.scale + wheelY / SCALE_QUOTIENT)
             if (wheeling) {
-              setItemSpring({ scale: next })
+              itemSpringApi.set({ scale: next })
             } else {
-              await setItemSpring({ scale: next })
+              await itemSpringApi.set({ scale: next })
               dispatch({
                 type: "UPDATE_ITEM",
                 payload: {
@@ -108,7 +110,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
     { transform: ([x, y]) => [x, -y] }
   )
 
-  const [{ inset }, setInset] = useSpring(() => ({
+  const [{ inset }, insetSpringApi] = useSpring(() => ({
     inset: [0, 0, 0, 0],
   }))
 
@@ -130,9 +132,9 @@ const ThreeCanvasImage = ({ item }: Props) => {
                 canvasScale
           )
           if (down) {
-            setItemSpring({ scale: next })
+            itemSpringApi.set({ scale: next })
           } else {
-            await setItemSpring({ scale: next })
+            await itemSpringApi.set({ scale: next })
             dispatch({
               type: "UPDATE_ITEM",
               payload: {
@@ -165,35 +167,57 @@ const ThreeCanvasImage = ({ item }: Props) => {
         )
       }
       case "CROP": {
-        const op = () => async ({
+        const op = (ord: number) => async ({
           movement,
           event,
           down,
         }: FullGestureState<"drag">) => {
           event?.stopPropagation()
-          // console.log(my, factor, canvasScale, height)
-          const [mx, my] = pipe(
+          const m = pipe(
             movement,
             map((v) => v / item.scale / canvasScale),
             ([x, y]) => [x / item.width, y / item.height]
           )
-          console.log(my)
-          // here
+          const s = ord < 2 ? -1 : 1
+          const next = produce(inset.get(), (draft) => {
+            draft[ord] = clamp(0, 1)(s * m[(ord + 1) % 2])
+          })
+          insetSpringApi.start({ inset: next })
         }
         return (
           <Fragment>
             <AnimatedEdgeHandle
-              // position={[0, dy, 0]}
-              // position-x={inset.to((x, y, z, w) => w - y)}
-              position-x={0}
-              position-y={inset.to((t) => dy - t)}
-              // position-y={dy}
+              position-x={inset.to(
+                (_t, r, _b, l) => (l * item.width - r * item.width) / 2
+              )}
+              position-y={inset.to((t) => dy - item.height * t)}
               position-z={0}
-              {...(handleBind(op()) as any)}
+              {...(handleBind(op(0)) as any)}
             />
-            <AnimatedEdgeHandle position={[dx, 0, 0]} />
-            <AnimatedEdgeHandle position={[0, -dy, 0]} />
-            <AnimatedEdgeHandle position={[-dx, 0, 0]} />
+            <AnimatedEdgeHandle
+              position-x={inset.to((t, r, b, l) => dx - item.width * r)}
+              position-y={inset.to(
+                (t, _r, b, _l) => (b * item.height - t * item.height) / 2
+              )}
+              position-z={0}
+              {...(handleBind(op(1)) as any)}
+            />
+            <AnimatedEdgeHandle
+              position-x={inset.to(
+                (_t, r, _b, l) => (l * item.width - r * item.width) / 2
+              )}
+              position-y={inset.to((_t, _r, b) => -dy + item.height * b)}
+              position-z={0}
+              {...(handleBind(op(2)) as any)}
+            />
+            <AnimatedEdgeHandle
+              position-x={inset.to((_t, _r, _b, l) => -dx + item.width * l)}
+              position-y={inset.to(
+                (t, _r, b, _l) => (b * item.height - t * item.height) / 2
+              )}
+              position-z={0}
+              {...(handleBind(op(3)) as any)}
+            />
           </Fragment>
         )
       }
