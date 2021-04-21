@@ -5,6 +5,7 @@ import executeCrop from "lib/crop"
 import create from "zustand"
 import { persist } from "zustand/middleware"
 import { CanvasAction, CanvasItemT, CanvasState } from "../../types/canvas"
+import localForage from "localforage"
 
 const initialState: CanvasState = {
   mode: "SELECT",
@@ -90,7 +91,10 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
 }
 
 export const useCanvasStore = create(
-  persist(withUndoableReducer(reducer, initialState), { name: "canvasStore" })
+  persist(withUndoableReducer(reducer, initialState), {
+    name: "canvasStore",
+    getStorage: () => localForage as any,
+  })
 )
 
 // export const useCanvasStore = create(withUndoableReducer(reducer, initialState))

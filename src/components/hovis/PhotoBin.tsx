@@ -7,6 +7,7 @@ import { useCanvasStore } from "../../stores/canvas"
 import { usePhotoStore } from "../../stores/photos"
 import Link from "../Link"
 import UnsplashPhoto from "../UnsplashPhoto"
+import { createHash } from "crypto"
 
 type Props = HTMLProps<HTMLDivElement> & {
   onDispatch?: () => void
@@ -45,7 +46,10 @@ const PhotoBin = ({ onDispatch = () => {}, ...props }: Props) => {
                 onClick={() => {
                   dispatchCanvas(
                     insertCanvasImageItemAction({
-                      id: photo.id,
+                      id: Buffer.from(photo.id).toString("hex"),
+                      // createHash("sha256")
+                      //   .update(photo.id, "utf-8")
+                      //   .digest("hex"),
                       src: photo.urls.regular,
                       naturalWidth: photo.width,
                       naturalHeight: photo.height,

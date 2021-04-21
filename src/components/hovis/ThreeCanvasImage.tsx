@@ -35,6 +35,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
     store.dispatch,
   ])
   const { src, width, height } = item
+  console.log(width, height)
   const texture = useLoader(THREE.TextureLoader, src)
 
   const { rotate, translate, scale } = item
