@@ -1,7 +1,7 @@
 import { withUndoableReducer } from "@bearjam/tom"
 import { filter } from "fp-ts/ReadonlyArray"
-import { filterWithIndex } from "fp-ts/ReadonlyRecord"
 import produce from "immer"
+import executeCrop from "lib/crop"
 import create from "zustand"
 import { persist } from "zustand/middleware"
 import { CanvasAction, CanvasItemT, CanvasState } from "../../types/canvas"
@@ -19,9 +19,19 @@ const initialState: CanvasState = {
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   switch (action.type) {
-    case "SELECT_ITEMS": {
+    case "CROP_IMAGE":
+      return produce(state, (draft) => {
+        let { itemId: id, inset, htmlImage } = action.payload
+        const i = draft.items.findIndex((item) => item.id === id)
+        if (i !== -1) {
+          draft.items[i] = {
+            ...draft.items[i],
+            src: executeCrop(htmlImage, inset),
+          } as CanvasItemT
+        }
+      })
+    case "SELECT_ITEMS":
       return state
-    }
     case "UPDATE_CANVAS":
       return {
         ...state,

@@ -1,12 +1,13 @@
-import { animated, to, useSpring } from "@react-spring/three"
-import { useLoader, useThree } from "@react-three/fiber"
+import { animated, useSpring } from "@react-spring/three"
+import { Text } from "@react-three/drei"
+import { useLoader } from "@react-three/fiber"
 import { AnimatedCropImageMaterial } from "components/materials/CropImageMaterial"
 import { pipe } from "fp-ts/function"
 import { map } from "fp-ts/ReadonlyArray"
 import produce from "immer"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
-import React, { Fragment } from "react"
+import React, { Fragment, useEffect, useRef } from "react"
 import { useDrag, useGesture } from "react-use-gesture"
 import { FullGestureState } from "react-use-gesture/dist/types"
 import { useCanvasStore } from "stores/canvas"
@@ -22,13 +23,19 @@ const AnimatedEdgeHandle = animated(ThreeEdgeHandle)
 type Props = { item: CanvasImageItem } & CanvasProps
 
 const ThreeCanvasImage = ({ item }: Props) => {
+  const htmlImage = useRef(new Image())
+  useEffect(() => {
+    // htmlImage.current = new Image() ??
+    htmlImage.current.crossOrigin = "anonymous"
+    htmlImage.current.src = item.src
+  }, [item.src])
+
   const [{ mode, scale: canvasScale }, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
   ])
   const { src, width, height } = item
   const texture = useLoader(THREE.TextureLoader, src)
-  const { factor } = useThree((x) => x.viewport)
 
   const { rotate, translate, scale } = item
 
@@ -111,8 +118,21 @@ const ThreeCanvasImage = ({ item }: Props) => {
   )
 
   const [{ inset }, insetSpringApi] = useSpring(() => ({
-    inset: [0, 0, 0, 0],
+    inset: [0, 0, 0, 0] as [number, number, number, number],
   }))
+
+  const executeCrop = () => {
+    if (!htmlImage.current.complete) return
+    dispatch({
+      type: "CROP_IMAGE",
+      payload: {
+        itemId: item.id,
+        inset: inset.get(),
+        htmlImage: htmlImage.current,
+      },
+    })
+    insetSpringApi.start({ inset: [0, 0, 0, 0], immediate: true })
+  }
 
   function modeChildren() {
     const [dx, dy] = [width / 2, height / 2]
@@ -218,6 +238,19 @@ const ThreeCanvasImage = ({ item }: Props) => {
               position-z={0}
               {...(handleBind(op(3)) as any)}
             />
+            <Text
+              color="black"
+              fontSize={100}
+              position-x={dx + 100}
+              position-y={dy + 100}
+              onClick={executeCrop}
+            >
+              CROP!
+            </Text>
+            {/* <mesh position-x={dx }>
+              <planeBufferGeometry args={[100, 100]} />
+              <meshBasicMaterial color="tomato" />
+            </mesh> */}
           </Fragment>
         )
       }

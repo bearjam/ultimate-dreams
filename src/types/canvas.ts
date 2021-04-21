@@ -105,6 +105,15 @@ export type UpdateCanvasItemAction = {
   } & Partial<CanvasItemT>
 }
 
+export type CropCanvasImageItemAction = {
+  type: "CROP_IMAGE"
+  payload: {
+    itemId: string
+    inset: [number, number, number, number]
+    htmlImage: HTMLImageElement
+  }
+}
+
 export type CanvasAction =
   | InsertCanvasItemAction
   | DeleteCanvasItemAction
@@ -116,6 +125,7 @@ export type CanvasAction =
   | SelectItemsAction
   | ScaleCanvasItemAction
   | UpdateCanvasItemAction
+  | CropCanvasImageItemAction
 
 export type CanvasStore = Dispatcher<CanvasState, CanvasAction> & Patcher
 
