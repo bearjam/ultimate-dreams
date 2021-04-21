@@ -34,8 +34,9 @@ const ThreeCanvasImage = ({ item }: Props) => {
     store.state,
     store.dispatch,
   ])
+
   const { src, width, height } = item
-  console.log(width, height)
+
   const texture = useLoader(THREE.TextureLoader, src)
 
   const { rotate, translate, scale } = item
@@ -63,7 +64,6 @@ const ThreeCanvasImage = ({ item }: Props) => {
               translate,
               ([x, y]) => [x + dx, y + dy] as Vector2
             )
-            console.log(next)
             if (down) itemSpringApi.start({ translate: next })
             else {
               await itemSpringApi.start({ translate: next })
@@ -271,15 +271,17 @@ const ThreeCanvasImage = ({ item }: Props) => {
       {...(itemBind() as any)}
     >
       <planeBufferGeometry args={[width, height]} />
-      {/* <meshBasicMaterial map={texture} visible={mode !== "CROP"} /> */}
-      <AnimatedCropImageMaterial
-        uniforms-u_image-value={texture}
-        uniforms-u_inset-value-x={inset.to((x) => x)}
-        uniforms-u_inset-value-y={inset.to((_x, y) => y)}
-        uniforms-u_inset-value-z={inset.to((_x, _y, z) => z)}
-        uniforms-u_inset-value-w={inset.to((_x, _y, _z, w) => w)}
-        visible={mode === "CROP"}
-      />
+      {mode !== "CROP" ? (
+        <meshBasicMaterial map={texture} />
+      ) : (
+        <AnimatedCropImageMaterial
+          uniforms-u_image-value={texture}
+          uniforms-u_inset-value-x={inset.to((x) => x)}
+          uniforms-u_inset-value-y={inset.to((_x, y) => y)}
+          uniforms-u_inset-value-z={inset.to((_x, _y, z) => z)}
+          uniforms-u_inset-value-w={inset.to((_x, _y, _z, w) => w)}
+        />
+      )}
       <group position-z={2}>{modeChildren()}</group>
     </animated.mesh>
   )

@@ -1,7 +1,9 @@
+import { CanvasImageItem } from "types/canvas"
+
 export function executeCrop(
   htmlImage: HTMLImageElement,
   inset: [number, number, number, number]
-): string {
+): Partial<CanvasImageItem> {
   const canvas = document.createElement("canvas"),
     ctx = canvas.getContext("2d")
 
@@ -37,7 +39,11 @@ export function executeCrop(
   const test = new Image(crop.width, crop.height)
   test.src = newImage
   document.body.appendChild(test)
-  return newImage
+  return {
+    src: newImage,
+    width: crop.width,
+    height: crop.height,
+  }
 }
 
 export default executeCrop

@@ -27,7 +27,7 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         if (i !== -1) {
           draft.items[i] = {
             ...draft.items[i],
-            src: executeCrop(htmlImage, inset),
+            ...executeCrop(htmlImage, inset),
           } as CanvasItemT
         }
       })

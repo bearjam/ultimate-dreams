@@ -18,8 +18,6 @@ const ThreeCanvas = ({ canvasSpring }: CanvasProps) => {
     store.dispatch,
   ])
 
-  console.log(items, "items!")
-
   const [{ translate, scale }, set] = canvasSpring
 
   const clampScale = clamp(0.1, 1.5)
