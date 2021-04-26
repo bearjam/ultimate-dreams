@@ -6,17 +6,25 @@ import DomCanvas from "./DomCanvas"
 import css from "./index.module.css"
 import ThreeCanvas from "./ThreeCanvas"
 import { Canvas as R3FCanvas } from "@react-three/fiber"
+import { useEffect } from "react"
 
 export type CanvasProps = {
   canvasSpring: FullSpring<Transforms2D>
 }
 
 const CanvasCommon = () => {
-  const state = useCanvasStore(({ state: { rotate, translate, scale } }) => ({
-    rotate,
-    translate,
-    scale,
-  }))
+  const state = useCanvasStore(
+    ({ state: { rotate, translate, scale, selectedItems } }) => ({
+      rotate,
+      translate,
+      scale,
+      selectedItems,
+    })
+  )
+  useEffect(() => {
+    // del me
+    console.log(state.selectedItems)
+  }, [state.selectedItems])
   const canvasSpring = useSpring<Transforms2D>(
     () => ({
       ...state,

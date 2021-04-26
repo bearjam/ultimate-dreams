@@ -1,5 +1,5 @@
 import { animated, useSpring } from "@react-spring/three"
-import { Text } from "@react-three/drei"
+import { Line, Text } from "@react-three/drei"
 import { useLoader } from "@react-three/fiber"
 import { AnimatedCropImageMaterial } from "components/materials/CropImageMaterial"
 import { pipe } from "fp-ts/function"
@@ -7,9 +7,10 @@ import { map } from "fp-ts/ReadonlyArray"
 import produce from "immer"
 import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
-import React, { Fragment, useEffect, useRef } from "react"
+import React, { Fragment, useEffect, useMemo, useRef } from "react"
 import { useDrag, useGesture } from "react-use-gesture"
 import { FullGestureState } from "react-use-gesture/dist/types"
+import usePlaneBufferGeometryEdgesPoints from "src/hooks/usePlaneBufferGeometryEdgesPoints"
 import { useCanvasStore } from "stores/canvas"
 import * as THREE from "three"
 import { CanvasImageItem, GestureHandlers } from "types/canvas"
@@ -23,19 +24,24 @@ const AnimatedEdgeHandle = animated(ThreeEdgeHandle)
 type Props = { item: CanvasImageItem } & CanvasProps
 
 const ThreeCanvasImage = ({ item }: Props) => {
+  const [{ mode, scale: canvasScale }, dispatch] = useCanvasStore((store) => [
+    store.state,
+    store.dispatch,
+  ])
+  const { src, width, height } = item
+
+  const planeBufferGeom = useMemo(
+    () => new THREE.PlaneBufferGeometry(width, height),
+    [width, height]
+  )
+  const points = usePlaneBufferGeometryEdgesPoints(planeBufferGeom)
+
   const htmlImage = useRef(new Image())
   useEffect(() => {
     // htmlImage.current = new Image() ??
     htmlImage.current.crossOrigin = "anonymous"
     htmlImage.current.src = item.src
   }, [item.src])
-
-  const [{ mode, scale: canvasScale }, dispatch] = useCanvasStore((store) => [
-    store.state,
-    store.dispatch,
-  ])
-
-  const { src, width, height } = item
 
   const texture = useLoader(THREE.TextureLoader, src)
 
@@ -255,6 +261,15 @@ const ThreeCanvasImage = ({ item }: Props) => {
           </Fragment>
         )
       }
+      case "SELECT": {
+        return (
+          <Line
+            points={points}
+            lineWidth={width / 100}
+            // position={[0, 0, 1]}
+          />
+        )
+      }
       default:
         return null
     }
@@ -270,7 +285,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
       scale-z={1}
       {...(itemBind() as any)}
     >
-      <planeBufferGeometry args={[width, height]} />
+      <primitive attach="geometry" object={planeBufferGeom} />
       {mode !== "CROP" ? (
         <meshBasicMaterial map={texture} />
       ) : (

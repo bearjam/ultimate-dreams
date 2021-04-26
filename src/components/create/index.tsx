@@ -3,7 +3,7 @@ import AssetTools from "./AssetTools"
 import CanvasCommon from "./CanvasCommon"
 import TransformTools from "./TransformTools"
 
-const HovisApp = () => {
+const Create = () => {
   return (
     <Fragment>
       <CanvasCommon />
@@ -13,4 +13,4 @@ const HovisApp = () => {
   )
 }
 
-export default HovisApp
+export default Create
