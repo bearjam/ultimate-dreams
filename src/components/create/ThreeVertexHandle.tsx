@@ -2,14 +2,14 @@ import { MeshProps } from "@react-three/fiber"
 import React from "react"
 
 type Props = MeshProps & {
-  width?: number
-  height?: number
+  radius?: number
+  segments?: number
 }
 
-const ThreeVertexHandle = ({ width = 50, height = 50, ...props }: Props) => {
+const ThreeVertexHandle = ({ radius = 50, segments = 64, ...props }: Props) => {
   return (
     <mesh {...props}>
-      <circleBufferGeometry args={[width, height]} />
+      <circleBufferGeometry args={[radius, segments]} />
       <meshBasicMaterial color="green" />
     </mesh>
   )

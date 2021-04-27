@@ -46,10 +46,9 @@ const PhotoBin = ({ onDispatch = () => {}, ...props }: Props) => {
                 onClick={() => {
                   dispatchCanvas(
                     insertCanvasImageItemAction({
-                      id: Buffer.from(photo.id).toString("hex"),
-                      // createHash("sha256")
-                      //   .update(photo.id, "utf-8")
-                      //   .digest("hex"),
+                      id: Buffer.from(
+                        [photo.id, Date.now()].join("-")
+                      ).toString("hex"),
                       src: photo.urls.regular,
                       naturalWidth: photo.width,
                       naturalHeight: photo.height,

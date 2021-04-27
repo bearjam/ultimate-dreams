@@ -5,7 +5,6 @@ import { AnimatedCropImageMaterial } from "components/materials/CropImageMateria
 import { pipe } from "fp-ts/function"
 import { map } from "fp-ts/ReadonlyArray"
 import produce from "immer"
-import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
 import React, { Fragment, useEffect, useMemo, useRef } from "react"
 import { useDrag, useGesture } from "react-use-gesture"
@@ -20,15 +19,19 @@ import ThreeEdgeHandle from "./ThreeEdgeHandle"
 import ThreeVertexHandle from "./ThreeVertexHandle"
 
 const AnimatedEdgeHandle = animated(ThreeEdgeHandle)
+const AnimatedVertexHandle = animated(ThreeVertexHandle)
+const AnimatedLine = animated(Line)
 
 type Props = { item: CanvasImageItem } & CanvasProps
 
 const ThreeCanvasImage = ({ item }: Props) => {
-  const [{ mode, scale: canvasScale }, dispatch] = useCanvasStore((store) => [
-    store.state,
-    store.dispatch,
-  ])
+  const [
+    { mode, scale: canvasScale, selectedItems },
+    dispatch,
+  ] = useCanvasStore((store) => [store.state, store.dispatch])
   const { src, width, height } = item
+  const selected: boolean =
+    selectedItems.findIndex((i) => i.id === item.id) !== -1
 
   const planeBufferGeom = useMemo(
     () => new THREE.PlaneBufferGeometry(width, height),
@@ -57,7 +60,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
     [rotate, translate, scale]
   )
 
-  const clampScale = clamp(0.1, 1.5)
+  const clampScale = clamp(0.1, 10)
 
   function getHandlers(): GestureHandlers {
     switch (mode) {
@@ -174,22 +177,29 @@ const ThreeCanvasImage = ({ item }: Props) => {
 
         return (
           <Fragment>
-            <ThreeVertexHandle
-              position={[dx, dy, 0]}
+            <AnimatedVertexHandle
+              position={[dx, dy, 1]}
+              radius={itemSpring.scale.to((v) => 30 / v)}
               {...(handleBind(op(1, 1)) as any)}
             />
-            <ThreeVertexHandle
+            <AnimatedVertexHandle
               position={[-dx, dy, 0]}
+              radius={itemSpring.scale.to((v) => 30 / v)}
               {...(handleBind(op(-1, 1)) as any)}
             />
-            <ThreeVertexHandle
+            <AnimatedVertexHandle
               position={[dx, -dy, 0]}
+              radius={itemSpring.scale.to((v) => 30 / v)}
               {...(handleBind(op(1, -1)) as any)}
             />
-            <ThreeVertexHandle
+            <AnimatedVertexHandle
               position={[-dx, -dy, 0]}
+              radius={itemSpring.scale.to((v) => 30 / v)}
               {...(handleBind(op(-1, -1)) as any)}
             />
+            {selected && (
+              <AnimatedLine points={points} lineWidth={1} color="tomato" />
+            )}
           </Fragment>
         )
       }
@@ -259,15 +269,6 @@ const ThreeCanvasImage = ({ item }: Props) => {
               <meshBasicMaterial color="tomato" />
             </mesh> */}
           </Fragment>
-        )
-      }
-      case "SELECT": {
-        return (
-          <Line
-            points={points}
-            lineWidth={width / 100}
-            // position={[0, 0, 1]}
-          />
         )
       }
       default:
