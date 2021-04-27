@@ -1,10 +1,11 @@
 import { animated, useSpring } from "@react-spring/three"
 import { Line, Text } from "@react-three/drei"
 import { useLoader } from "@react-three/fiber"
-import { AnimatedCropImageMaterial } from "components/materials/CropImageMaterial"
+import { AnimatedCanvasImageMaterial } from "components/materials/CanvasImageMaterial"
 import { pipe } from "fp-ts/function"
 import { map } from "fp-ts/ReadonlyArray"
 import produce from "immer"
+import { SCALE_QUOTIENT } from "lib/constants"
 import { clamp, springConfig, withSuspense } from "lib/util"
 import React, { Fragment, useEffect, useMemo, useRef } from "react"
 import { useDrag, useGesture } from "react-use-gesture"
@@ -290,7 +291,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
       {mode !== "CROP" ? (
         <meshBasicMaterial map={texture} />
       ) : (
-        <AnimatedCropImageMaterial
+        <AnimatedCanvasImageMaterial
           uniforms-u_image-value={texture}
           uniforms-u_inset-value-x={inset.to((x) => x)}
           uniforms-u_inset-value-y={inset.to((_x, y) => y)}
