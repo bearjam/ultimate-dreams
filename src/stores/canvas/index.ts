@@ -31,8 +31,10 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
           } as CanvasItemT
         }
       })
-    case "SELECT_ITEMS":
-      return state
+    case "SELECT_ITEM":
+      return produce(state, (draft) => {
+        draft.selectedItems = [action.payload.itemId]
+      })
     case "UPDATE_CANVAS":
       return {
         ...state,
@@ -63,13 +65,13 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
       return {
         ...state,
         items: [...state.items, action.payload],
-        selectedItems: [action.payload],
+        selectedItems: [action.payload.id],
       }
     case "DELETE_ITEM":
       return {
         ...state,
         selectedItems: [
-          ...filter<CanvasItemT>((item) => item.id !== action.payload.id)(
+          ...filter<string>((id) => id !== action.payload.id)(
             state.selectedItems
           ),
         ],

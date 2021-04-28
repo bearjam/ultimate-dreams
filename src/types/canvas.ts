@@ -33,7 +33,7 @@ export type CanvasState = Dimensions2D &
   Transforms2D & {
     mode: CanvasMode
     items: CanvasItemT[]
-    selectedItems: CanvasItemT[]
+    selectedItems: string[]
   }
 
 export type InsertCanvasItemAction = {
@@ -73,13 +73,10 @@ export type PanCanvasAction = {
   }
 }
 
-export type SelectItemsAction = {
-  type: "SELECT_ITEMS"
+export type SelectItemAction = {
+  type: "SELECT_ITEM"
   payload: {
-    x0: number
-    y0: number
-    x1: number
-    y1: number
+    itemId: string
   }
 }
 
@@ -122,7 +119,7 @@ export type CanvasAction =
   | MoveCanvasItemAction
   | PanCanvasAction
   | ZoomCanvasAction
-  | SelectItemsAction
+  | SelectItemAction
   | ScaleCanvasItemAction
   | UpdateCanvasItemAction
   | CropCanvasImageItemAction

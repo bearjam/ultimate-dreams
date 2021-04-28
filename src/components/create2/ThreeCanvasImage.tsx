@@ -37,10 +37,10 @@ const ThreeCanvasImage = ({ item }: Props) => {
     [item.rotate, item.translate, item.scale]
   )
 
-  function itemGestureHandlers(): GestureHandlers {
+  function modeGestureHandlers(): GestureHandlers {
     switch (state.mode) {
-      default:
       case "SELECT":
+      case "SCALE":
         return {
           onDrag: async ({ down, movement: [dx, dy], event }) => {
             event.stopPropagation()
@@ -61,16 +61,24 @@ const ThreeCanvasImage = ({ item }: Props) => {
             }
           },
         }
-      // default:
-      //   return {
-      //     onDrag: () => {},
-      //   }
+      default:
+        return {
+          onDrag: () => {},
+        }
     }
   }
 
-  const itemBind = useGesture(itemGestureHandlers(), {
-    transform: ([x, y]) => [x, -y],
-  })
+  const itemBind = useGesture(
+    {
+      onPointerDown: () => {
+        dispatch({ type: "SELECT_ITEM", payload: { itemId: item.id } })
+      },
+      ...modeGestureHandlers(),
+    },
+    {
+      transform: ([x, y]) => [x, -y],
+    }
+  )
 
   const handleBind = useDrag(
     (state) =>
