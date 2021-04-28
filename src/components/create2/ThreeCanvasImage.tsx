@@ -13,6 +13,7 @@ import { Fragment } from "react"
 import EdgeHandle from "./EdgeHandle"
 import VertexHandle from "./VertexHandle"
 import { VERTEX_RADIUS } from "lib/constants"
+import { map } from "fp-ts/ReadonlyArray"
 
 const clampScale = clamp(0.1, 10)
 
@@ -42,6 +43,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
   function modeGestureHandlers(): GestureHandlers {
     switch (state.mode) {
       case "SELECT":
+      case "CROP":
       case "SCALE":
         return {
           onDrag: async ({ down, movement: [dx, dy], event }) => {
@@ -101,8 +103,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
         }: FullGestureState<"drag">) => {
           event?.stopPropagation()
           const next = clampScale(
-            item.scale + (xmult * mx + ymult * my) / 2 / ((width + height) / 2)
-            // / canvasScale
+            item.scale + (xmult * mx + ymult * my) / ((width + height) / 2)
           )
           if (down) {
             spring.set({ scale: next })
@@ -153,7 +154,8 @@ const ThreeCanvasImage = ({ item }: Props) => {
           const m = pipe(
             movement,
             // map((v) => v / item.scale / canvasScale),
-            ([x, y]) => [x / item.width, y / item.height]
+            map((v) => v / item.scale),
+            ([x, y]) => [x / item.width, y / item.height] as const
           )
           const s = ord < 2 ? -1 : 1
           const next = produce(inset.get(), (draft) => {

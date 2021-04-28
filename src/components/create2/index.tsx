@@ -1,9 +1,9 @@
-import React, { useEffect } from "react"
-import css from "./index.module.css"
 import { Canvas as FiberCanvas } from "@react-three/fiber"
+import React from "react"
+import AssetTools from "./AssetTools"
 import CreateCanvas from "./CreateCanvas"
+import css from "./index.module.css"
 import TransformTools from "./TransformTools"
-import { useCanvasStore } from "stores/canvas"
 
 const Create2 = () => {
   return (
@@ -12,6 +12,7 @@ const Create2 = () => {
         <CreateCanvas />
       </FiberCanvas>
       <TransformTools />
+      <AssetTools />
     </div>
   )
 }

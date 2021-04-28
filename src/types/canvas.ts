@@ -27,7 +27,7 @@ export type CanvasTextItem = CanvasItemBase & {
 
 export type CanvasItemT = CanvasImageItem | CanvasTextItem
 
-export type CanvasMode = "SELECT" | "MOVE" | "SCALE" | "ROTATE" | "CROP"
+export type CanvasMode = "SELECT" | "SCALE" | "ROTATE" | "CROP"
 
 export type CanvasState = Dimensions2D &
   Transforms2D & {

@@ -4,35 +4,27 @@
 }
 
 .transformTools {
+  height: 24rem;
   @apply absolute right-0 inset-y-0 my-auto;
   @apply flex flex-col justify-evenly;
   @apply bg-white border-black border-4;
   @apply text-4xl;
   @apply py-4 px-2 mr-3;
-  height: 24rem;
-}
-
-/* .canvasContainer > * {
-  @apply absolute;
-  @apply top-0 left-0;
-} */
-
-/*
-.domCanvas {
-  @apply bg-red-500;
-  @apply overflow-hidden;
-}
-
-.domCanvasItem {
-  position: absolute;
-}
-
-.threeCanvas {
 }
 
 .assetTools {
-  @apply absolute;
-  @apply bg-green-500;
-  @apply border-4 border-black;
-  @apply mt-16;
-} */
+  height: 24rem;
+  width: 12rem;
+  @apply absolute left-0 inset-y-0 my-auto;
+  @apply bg-white border-black border-4;
+  @apply py-4 px-2 ml-3;
+}
+
+.photoBin {
+  /* height: 100%; */
+}
+
+.photoBin > div {
+  height: 18rem;
+  overflow-y: scroll;
+}

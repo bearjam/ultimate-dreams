@@ -1,7 +1,7 @@
 import { pipe } from "fp-ts/function"
 import { map } from "fp-ts/ReadonlyArray"
 import SvgDeleteIcon from "icons/SvgDeleteIcon"
-import React, { SVGProps } from "react"
+import React, { Fragment, SVGProps } from "react"
 import { animated, Spring } from "react-spring"
 import shallow from "zustand/shallow"
 import SvgCropIcon from "../../icons/SvgCropIcon"
@@ -67,6 +67,32 @@ const TransformTools = () => {
                       type: "DELETE_SELECTED_ITEMS",
                     })
                   }
+                >
+                  <SvgDeleteIcon />
+                </div>,
+              ]
+            }
+            case "CROP": {
+              return [
+                ...children,
+                <div
+                  key="CROP_EXEC"
+                  // onClick={
+                  //   () =>
+                  //   dispatch({
+                  //     type: "CROP_EXEC",
+                  //   })
+                  // }
+                >
+                  <SvgDeleteIcon />
+                </div>,
+                <div
+                  key="CROP_DISCARD"
+                  // onClick={
+                  // dispatch({
+                  //   type: "CROP_DISCARD",
+                  // })
+                  // }
                 >
                   <SvgDeleteIcon />
                 </div>,
