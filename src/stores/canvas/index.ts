@@ -1,13 +1,11 @@
 import { withUndoableReducer } from "@bearjam/tom"
-import { filter } from "fp-ts/ReadonlyArray"
+import { pipe } from "fp-ts/function"
 import produce, { Draft } from "immer"
 import executeCrop from "lib/crop"
+import localForage from "localforage"
 import create from "zustand"
 import { persist } from "zustand/middleware"
 import { CanvasAction, CanvasItemT, CanvasState } from "../../types/canvas"
-import localForage from "localforage"
-import { zSort } from "lib/util"
-import { pipe } from "fp-ts/function"
 
 const initialState: CanvasState = {
   mode: "SELECT",

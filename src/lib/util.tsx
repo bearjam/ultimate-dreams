@@ -63,6 +63,3 @@ export const vectorAdd = ([x0, y0]: Vector2, [x1, y1]: Vector2): Vector2 => [
   x0 + x1,
   y0 + y1,
 ]
-
-export const zSort = (items: CanvasItemT[]) =>
-  items.sort((a, b) => (a?.z ?? 0) - (b?.z ?? 0))
