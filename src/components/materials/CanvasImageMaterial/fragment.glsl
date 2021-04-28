@@ -12,37 +12,32 @@ void main() {
   vec4 texture = texture2D(u_image, vUv);
   float xMask = step(vUv.x, 1.0 - u_inset.y) * step(u_inset.w, vUv.x);
   float yMask = step(vUv.y, 1.0 - u_inset.x) * step(u_inset.z, vUv.y);
-  float gap = 0.3;
+
+  bool edges = u_edge_color.w > 0.0;
+  bool vertices = u_vertex_color.w > 0.0;
+
+  float gap = 0.2;
   float thickness = 0.05;
+
+  vec2 scale =
+      vec2(1.0 - (u_inset.w + u_inset.y), 1.0 - (u_inset.z + u_inset.x));
+
+  // bool gapTop = vUv.y > 1.0 - u_inset.x - gap;
+  // bool gapRight = vUv.x < 1.0 - u_inset.y - gap;
+  // bool gapBottom = vUv.y > u_inset.z + gap;
+  // bool gapLeft = vUv.x > u_inset.w + gap;
 
   bool edgeLeft = vUv.x < thickness + u_inset.w;
   bool edgeRight = vUv.x > 1.0 - thickness - u_inset.y;
   bool edgeBottom = vUv.y < thickness + u_inset.z;
   bool edgeTop = vUv.y > 1.0 - thickness - u_inset.x;
 
-  bool gapLeft = vUv.x > u_inset.w + gap;
-  bool gapRight = vUv.x < 1.0 - u_inset.y - gap;
-  bool gapBottom = vUv.y > u_inset.z + gap;
-  bool gapTop = vUv.y < 1.0 - u_inset.x - gap;
+  bool edge = edges && (edgeLeft || edgeRight || edgeTop || edgeBottom);
+  // !gapTop; // && gapTop && gapBottom;
+  bool vertex = false;
 
-  bool edges = u_edge_color.w > 0.0;
-
-  if (edges) {
-    if (edgeLeft || edgeRight) {
-      if (gapTop && gapBottom) {
-        gl_FragColor = u_edge_color;
-      } else {
-        gl_FragColor = vec4(xMask * yMask) * texture;
-      }
-    } else if (edgeBottom || edgeTop) {
-      if (gapLeft && gapRight) {
-        gl_FragColor = u_edge_color;
-      } else {
-        gl_FragColor = vec4(xMask * yMask) * texture;
-      }
-    } else {
-      gl_FragColor = vec4(xMask * yMask) * texture;
-    }
+  if (edge || vertex) {
+    gl_FragColor = u_edge_color;
   } else {
     gl_FragColor = vec4(xMask * yMask) * texture;
   }

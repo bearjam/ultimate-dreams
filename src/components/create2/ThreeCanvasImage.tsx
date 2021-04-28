@@ -31,8 +31,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
 
   function gestureHandlers(): GestureHandlers {
     switch (state.mode) {
-      case "MOVE":
-      default:
+      case "SELECT":
         return {
           onDrag: async ({ down, movement: [dx, dy], event }) => {
             event.stopPropagation()
@@ -57,7 +56,9 @@ const ThreeCanvasImage = ({ item }: Props) => {
         }
       case "SCALE":
         return {
-          onDrag: () => {},
+          onDrag: ({ xy }) => {
+            console.log(xy)
+          },
           // onWheel: async ({ wheeling, movement, event }) => {
           //   event.stopPropagation()
           //   const wheelY = movement[1] / canvasScale
@@ -76,11 +77,10 @@ const ThreeCanvasImage = ({ item }: Props) => {
           //   }
           // },
         }
-      // default:
-      //   return {
-      //     onDrag: () => {},
-      //     // onWheel: () => {},
-      //   }
+      default:
+        return {
+          onDrag: () => {},
+        }
     }
   }
 
