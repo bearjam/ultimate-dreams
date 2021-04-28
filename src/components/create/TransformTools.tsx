@@ -29,8 +29,6 @@ const TransformTools = () => {
     (store) => [store.state, store.dispatch],
     shallow
   )
-  // see if any selected item(s)
-  // if so then show available ops, e.g. TRASH
   return (
     <div className={css.transformTools}>
       {pipe(
