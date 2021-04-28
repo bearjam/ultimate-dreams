@@ -25,8 +25,8 @@ const modeIcons: [
 ]
 
 const TransformTools = () => {
-  const [mode, dispatch] = useCanvasStore(
-    (store) => [store.state.mode, store.dispatch],
+  const [state, dispatch] = useCanvasStore(
+    (store) => [store.state, store.dispatch],
     shallow
   )
   // see if any selected item(s)
@@ -40,7 +40,7 @@ const TransformTools = () => {
             key={iconMode}
             from={{ scale: 0.66, opacity: 0.8 }}
             to={{ scale: 1.33, opacity: 1 }}
-            reverse={iconMode !== mode}
+            reverse={iconMode !== state.mode}
           >
             {(style) => (
               <animated.div
@@ -56,54 +56,63 @@ const TransformTools = () => {
               </animated.div>
             )}
           </Spring>
-        )),
-        (children) => {
-          switch (mode) {
-            case "SELECT": {
-              return [
-                ...children,
-                <div
-                  key="DELETE_SELECTED_ITEMS"
-                  onClick={() =>
-                    dispatch({
-                      type: "DELETE_SELECTED_ITEMS",
-                    })
-                  }
-                >
-                  <SvgDeleteIcon />
-                </div>,
-              ]
-            }
-            case "CROP": {
-              return [
-                ...children,
-                <div
-                  key="EXECUTE_CROP"
-                  onClick={() =>
-                    dispatch({
-                      type: "EXECUTE_CROP",
-                    })
-                  }
-                >
-                  <SvgPlusIcon />
-                </div>,
-                <div
-                  key="CLEAR_CROP_INSET"
-                  onClick={() =>
-                    dispatch({
-                      type: "CLEAR_CROP_INSET",
-                    })
-                  }
-                >
-                  <SvgCloseIcon />
-                </div>,
-              ]
-            }
-            default:
-              return children
-          }
-        }
+        ))
       )}
+      {state.selectedItems.length > 0 && (
+        <div
+          key="DELETE_SELECTED_ITEMS"
+          onClick={() =>
+            dispatch({
+              type: "DELETE_SELECTED_ITEMS",
+            })
+          }
+        >
+          <SvgDeleteIcon />
+        </div>
+      )}
+      {state.mode === "CROP" && state.crop !== null && (
+        <Fragment>
+          <div
+            key="EXECUTE_CROP"
+            onClick={() =>
+              dispatch({
+                type: "EXECUTE_CROP",
+              })
+            }
+          >
+            <SvgPlusIcon />
+          </div>
+          <div
+            key="CLEAR_CROP_INSET"
+            onClick={() =>
+              dispatch({
+                type: "CLEAR_CROP_INSET",
+              })
+            }
+          >
+            <SvgCloseIcon />
+          </div>
+        </Fragment>
+      )}
+      {}
+
+      {/* // (children) => {
+        //   switch (mode) {
+        //     case "SELECT": {
+        //       return [
+        //         ...children,
+        //       ]
+        //     }
+        //     case "CROP": {
+        //       return [
+        //         ...children,
+        //       ]
+        //     }
+        //     default:
+        //       return children
+        //   }
+        // }
+      // )} */}
     </div>
   )
 }

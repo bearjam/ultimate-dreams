@@ -33,7 +33,7 @@ export const nearestNumber = (xs: number[]) => (x: number) =>
 export const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 export const getWidth = () => {
-  return !window ? 600 : min(window.innerWidth, 1600)
+  return !window ? 600 : min(window.innerWidth / 2, 600)
 }
 
 export const springConfig = {

@@ -5,15 +5,11 @@ import { useCanvasStore } from "stores/canvas"
 import ThreeCanvasImage from "./ThreeCanvasImage"
 import ThreeCanvasText from "./ThreeCanvasText"
 
-const ThreeCanvas = () => {
+const CreateCanvas = () => {
   const [state, dispatch] = useCanvasStore((store) => [
     store.state,
     store.dispatch,
   ])
-  useEffect(() => {
-    console.log(`items.length: ${state.items.length}`)
-  }, [state.items])
-
   useEffect(() => {
     dispatch({
       type: "CLEAR_CROP_INSET",
@@ -35,4 +31,4 @@ const ThreeCanvas = () => {
   return <Fragment>{children}</Fragment>
 }
 
-export default ThreeCanvas
+export default CreateCanvas

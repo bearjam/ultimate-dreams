@@ -5,7 +5,7 @@ import CreateCanvas from "./CreateCanvas"
 import css from "./index.module.css"
 import TransformTools from "./TransformTools"
 
-const Create2 = () => {
+const Create = () => {
   return (
     <div className={css.canvasContainer}>
       <FiberCanvas orthographic>
@@ -17,4 +17,4 @@ const Create2 = () => {
   )
 }
 
-export default Create2
+export default Create
