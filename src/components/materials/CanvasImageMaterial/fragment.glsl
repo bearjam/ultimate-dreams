@@ -7,9 +7,13 @@ uniform sampler2D u_image;
 uniform vec4 u_inset;
 uniform vec4 u_edge_color;
 uniform vec4 u_vertex_color;
+uniform bool u_edges;
+uniform bool u_vertices;
+uniform bool u_central_cross;
 
 void main() {
   vec4 texture = texture2D(u_image, vUv);
+
   float xMask = step(vUv.x, 1.0 - u_inset.y) * step(u_inset.w, vUv.x);
   float yMask = step(vUv.y, 1.0 - u_inset.x) * step(u_inset.z, vUv.y);
 
@@ -32,7 +36,8 @@ void main() {
   bool edgeBottom = vUv.y < thickness + u_inset.z;
   bool edgeTop = vUv.y > 1.0 - thickness - u_inset.x;
 
-  bool edge = edges && (edgeLeft || edgeRight || edgeTop || edgeBottom);
+  // bool edge = edges && (edgeLeft || edgeRight || edgeTop || edgeBottom);
+  bool edge = false;
   // !gapTop; // && gapTop && gapBottom;
   bool vertex = false;
 
