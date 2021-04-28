@@ -14,16 +14,16 @@ const AssetTools = () => {
     <div className={css.assetTools}>
       <ReactTabs>
         <TabList>
-          <Tab>Text</Tab>
           <Tab>Images</Tab>
+          <Tab>Text</Tab>
         </TabList>
+        <TabPanel>
+          <PhotoBin />
+        </TabPanel>
         <TabPanel>
           <TextForm
             onSubmit={(text) => dispatch(insertCanvasTextItemAction({ text }))}
           />
-        </TabPanel>
-        <TabPanel>
-          <PhotoBin />
         </TabPanel>
       </ReactTabs>
     </div>

@@ -1,2 +1,2 @@
 import dynamic from "next/dynamic"
-export default dynamic(() => import("components/create2"), { ssr: false })
+export default dynamic(() => import("components/create"), { ssr: false })

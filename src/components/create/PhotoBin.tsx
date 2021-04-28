@@ -7,35 +7,29 @@ import { useCanvasStore } from "../../stores/canvas"
 import { usePhotoStore } from "../../stores/photos"
 import Link from "../Link"
 import UnsplashPhoto from "../UnsplashPhoto"
+import css from "./index.module.css"
 
 type Props = HTMLProps<HTMLDivElement> & {
   onDispatch?: () => void
 }
 
 const PhotoBin = ({ onDispatch = () => {}, ...props }: Props) => {
-  const [photos, dispatchPhoto] = usePhotoStore((store) => [
-    store.state.photos,
-    store.dispatch,
-  ])
+  const photos = usePhotoStore((store) => store.state.photos)
   const dispatchCanvas = useCanvasStore((store) => store.dispatch)
 
   return (
-    <div {...props}>
-      <article>
-        <h2>photo bin</h2>
-      </article>
+    <div className={css.photoBin} {...props}>
       {photos.length < 1 ? (
         <article>
-          <h3>Photo Bin Empty!</h3>
+          <h4>Photo Bin Empty!</h4>
           <Link href="/explore">
             <a>
-              <h4>Explore Photos?</h4>
+              <h5>Explore Photos?</h5>
             </a>
           </Link>
         </article>
       ) : (
-        <article>
-          <h2>Select any image to send to canvas</h2>
+        <div>
           {pipe(
             photos,
             map((photo) => (
@@ -59,7 +53,7 @@ const PhotoBin = ({ onDispatch = () => {}, ...props }: Props) => {
               />
             ))
           )}
-        </article>
+        </div>
       )}
     </div>
   )

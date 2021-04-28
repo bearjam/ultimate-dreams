@@ -29,12 +29,16 @@ export type CanvasItemT = CanvasImageItem | CanvasTextItem
 
 export type CanvasMode = "SELECT" | "SCALE" | "ROTATE" | "CROP"
 
-export type CanvasState = Dimensions2D &
-  Transforms2D & {
-    mode: CanvasMode
-    items: CanvasItemT[]
-    selectedItems: string[]
+export type CanvasState = {
+  mode: CanvasMode
+  items: CanvasItemT[]
+  selectedItems: string[]
+  crop: null | {
+    itemId: string
+    inset: [number, number, number, number]
+    htmlImage: HTMLImageElement
   }
+}
 
 export type InsertCanvasItemAction = {
   type: "INSERT_ITEM"
@@ -99,13 +103,21 @@ export type UpdateCanvasItemAction = {
   } & Partial<CanvasItemT>
 }
 
-export type CropCanvasImageItemAction = {
-  type: "CROP_IMAGE"
+export type ExecuteCropAction = {
+  type: "EXECUTE_CROP"
+}
+
+export type UpdateCropInsetAction = {
+  type: "UPDATE_CROP_INSET"
   payload: {
     itemId: string
     inset: [number, number, number, number]
     htmlImage: HTMLImageElement
   }
+}
+
+export type ClearCropInsetAction = {
+  type: "CLEAR_CROP_INSET"
 }
 
 export type CanvasAction =
@@ -119,7 +131,9 @@ export type CanvasAction =
   | SelectItemAction
   | ScaleCanvasItemAction
   | UpdateCanvasItemAction
-  | CropCanvasImageItemAction
+  | ExecuteCropAction
+  | UpdateCropInsetAction
+  | ClearCropInsetAction
 
 export type CanvasStore = Dispatcher<CanvasState, CanvasAction> & Patcher
 

@@ -1,6 +1,7 @@
 import { withUndoableReducer } from "@bearjam/tom"
 import { pipe } from "fp-ts/function"
 import produce, { Draft } from "immer"
+import { WritableDraft } from "immer/dist/internal"
 import executeCrop from "lib/crop"
 import localForage from "localforage"
 import create from "zustand"
@@ -11,43 +12,52 @@ const initialState: CanvasState = {
   mode: "SELECT",
   items: [],
   selectedItems: [],
-  width: 4000,
-  height: 4000,
-  rotate: 0,
-  translate: [0, 0],
-  scale: 0.1,
+  crop: null,
 }
 
 const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
   switch (action.type) {
-    case "CROP_IMAGE":
-      return produce(state, (draft) => {
-        let { itemId: id, inset, htmlImage } = action.payload
-        const i = draft.items.findIndex((item) => item.id === id)
-        if (i !== -1) {
-          draft.items[i] = {
-            ...draft.items[i],
-            ...executeCrop(htmlImage, inset),
-          } as CanvasItemT
-        }
-      })
+    case "EXECUTE_CROP":
+      if (state.crop === null) return state
+      const { htmlImage, inset, itemId } = state.crop
+      return {
+        ...produce(state, (draft) => {
+          const i = draft.items.findIndex((item) => item.id === itemId)
+          if (i !== -1) {
+            draft.items[i] = {
+              ...draft.items[i],
+              ...executeCrop(htmlImage, inset),
+            } as CanvasItemT
+          }
+        }),
+        crop: null,
+      }
+    case "CLEAR_CROP_INSET": {
+      return {
+        ...state,
+        crop: null,
+      }
+    }
+    case "UPDATE_CROP_INSET": {
+      return {
+        ...state,
+        crop: action.payload,
+      }
+    }
     case "SELECT_ITEM":
-      // export const zPop = (draft: Draft<StateT>, topItem: ItemT) => {
-      // }
-
       return pipe(
         state,
         produce((draft) => {
           draft.selectedItems = [action.payload.itemId]
         }),
-        produce((draft: Draft<CanvasState>) => {
+        produce((draft) => {
           const i = draft.items.findIndex(
-            (item) => item.id === action.payload.itemId
+            (item: CanvasItemT) => item.id === action.payload.itemId
           )
           if (i !== -1) {
             let j = draft.items.length
             draft.items[i].z = j--
-            draft.items.forEach((item, ii) => {
+            draft.items.forEach((item: CanvasItemT, ii: number) => {
               if (ii === i) return
               item.z = j--
             })
@@ -93,12 +103,6 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         )
         draft.selectedItems = []
       })
-    case "DELETE_ALL_ITEMS":
-      return {
-        ...state,
-        items: [],
-        selectedItems: [],
-      }
     default:
       return state
   }

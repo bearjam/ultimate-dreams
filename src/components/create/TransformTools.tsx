@@ -1,11 +1,12 @@
-import clsx from "clsx"
 import { pipe } from "fp-ts/function"
 import { map } from "fp-ts/ReadonlyArray"
-import React, { HTMLProps, SVGProps } from "react"
+import SvgCloseIcon from "icons/SvgCloseIcon"
+import SvgDeleteIcon from "icons/SvgDeleteIcon"
+import SvgPlusIcon from "icons/SvgPlusIcon"
+import React, { Fragment, SVGProps } from "react"
 import { animated, Spring } from "react-spring"
 import shallow from "zustand/shallow"
 import SvgCropIcon from "../../icons/SvgCropIcon"
-import SvgMoveIcon from "../../icons/SvgMoveIcon"
 import SvgRotateIcon from "../../icons/SvgRotateIcon"
 import SvgScaleIcon from "../../icons/SvgScaleIcon"
 import SvgSelectIcon from "../../icons/SvgSelectIcon"
@@ -18,7 +19,6 @@ const modeIcons: [
   (props: SVGProps<SVGSVGElement>) => JSX.Element
 ][] = [
   ["SELECT", SvgSelectIcon],
-  ["MOVE", SvgMoveIcon],
   ["SCALE", SvgScaleIcon],
   ["ROTATE", SvgRotateIcon],
   ["CROP", SvgCropIcon],
@@ -29,6 +29,8 @@ const TransformTools = () => {
     (store) => [store.state.mode, store.dispatch],
     shallow
   )
+  // see if any selected item(s)
+  // if so then show available ops, e.g. TRASH
   return (
     <div className={css.transformTools}>
       {pipe(
@@ -54,7 +56,53 @@ const TransformTools = () => {
               </animated.div>
             )}
           </Spring>
-        ))
+        )),
+        (children) => {
+          switch (mode) {
+            case "SELECT": {
+              return [
+                ...children,
+                <div
+                  key="DELETE_SELECTED_ITEMS"
+                  onClick={() =>
+                    dispatch({
+                      type: "DELETE_SELECTED_ITEMS",
+                    })
+                  }
+                >
+                  <SvgDeleteIcon />
+                </div>,
+              ]
+            }
+            case "CROP": {
+              return [
+                ...children,
+                <div
+                  key="EXECUTE_CROP"
+                  onClick={() =>
+                    dispatch({
+                      type: "EXECUTE_CROP",
+                    })
+                  }
+                >
+                  <SvgPlusIcon />
+                </div>,
+                <div
+                  key="CLEAR_CROP_INSET"
+                  onClick={() =>
+                    dispatch({
+                      type: "CLEAR_CROP_INSET",
+                    })
+                  }
+                >
+                  <SvgCloseIcon />
+                </div>,
+              ]
+            }
+            default:
+              return children
+          }
+        }
       )}
     </div>
   )
