@@ -11,6 +11,8 @@ import { FullGestureState } from "react-use-gesture/dist/types"
 import produce from "immer"
 import { Fragment } from "react"
 import EdgeHandle from "./EdgeHandle"
+import VertexHandle from "./VertexHandle"
+import { VERTEX_RADIUS } from "lib/constants"
 
 const clampScale = clamp(0.1, 10)
 
@@ -37,6 +39,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
 
   function itemGestureHandlers(): GestureHandlers {
     switch (state.mode) {
+      default:
       case "SELECT":
         return {
           onDrag: async ({ down, movement: [dx, dy], event }) => {
@@ -58,10 +61,10 @@ const ThreeCanvasImage = ({ item }: Props) => {
             }
           },
         }
-      default:
-        return {
-          onDrag: () => {},
-        }
+      // default:
+      //   return {
+      //     onDrag: () => {},
+      //   }
     }
   }
 
@@ -86,16 +89,13 @@ const ThreeCanvasImage = ({ item }: Props) => {
         }: FullGestureState<"drag">) => {
           event?.stopPropagation()
           const next = clampScale(
-            scale +
-              (xmult * mx + ymult * my) /
-                2 /
-                ((width + height) / 2) /
-                canvasScale
+            item.scale + (xmult * mx + ymult * my) / 2 / ((width + height) / 2)
+            // / canvasScale
           )
           if (down) {
-            itemSpringApi.set({ scale: next })
+            spring.set({ scale: next })
           } else {
-            await itemSpringApi.set({ scale: next })
+            await spring.set({ scale: next })
             dispatch({
               type: "UPDATE_ITEM",
               payload: {
@@ -108,29 +108,26 @@ const ThreeCanvasImage = ({ item }: Props) => {
 
         return (
           <Fragment>
-            <AnimatedVertexHandle
-              position={[dx, dy, 1]}
-              radius={itemSpring.scale.to((v) => 30 / v)}
+            <VertexHandle
+              position={[width / 2, height / 2, 1]}
+              radius={scale.to((v) => VERTEX_RADIUS / v)}
               {...(handleBind(op(1, 1)) as any)}
             />
-            <AnimatedVertexHandle
-              position={[-dx, dy, 0]}
-              radius={itemSpring.scale.to((v) => 30 / v)}
+            <VertexHandle
+              position={[-(width / 2), height / 2, 0]}
+              radius={scale.to((v) => VERTEX_RADIUS / v)}
               {...(handleBind(op(-1, 1)) as any)}
             />
-            <AnimatedVertexHandle
-              position={[dx, -dy, 0]}
-              radius={itemSpring.scale.to((v) => 30 / v)}
+            <VertexHandle
+              position={[width / 2, -(height / 2), 0]}
+              radius={scale.to((v) => VERTEX_RADIUS / v)}
               {...(handleBind(op(1, -1)) as any)}
             />
-            <AnimatedVertexHandle
-              position={[-dx, -dy, 0]}
-              radius={itemSpring.scale.to((v) => 30 / v)}
+            <VertexHandle
+              position={[-(width / 2), -(height / 2), 0]}
+              radius={scale.to((v) => VERTEX_RADIUS / v)}
               {...(handleBind(op(-1, -1)) as any)}
             />
-            {selected && (
-              <AnimatedLine points={points} lineWidth={1} color="tomato" />
-            )}
           </Fragment>
         )
       }
