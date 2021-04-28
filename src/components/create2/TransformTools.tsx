@@ -1,5 +1,6 @@
 import { pipe } from "fp-ts/function"
 import { map } from "fp-ts/ReadonlyArray"
+import SvgDeleteIcon from "icons/SvgDeleteIcon"
 import React, { SVGProps } from "react"
 import { animated, Spring } from "react-spring"
 import shallow from "zustand/shallow"
@@ -53,7 +54,28 @@ const TransformTools = () => {
               </animated.div>
             )}
           </Spring>
-        ))
+        )),
+        (children) => {
+          switch (mode) {
+            case "SELECT": {
+              return [
+                ...children,
+                <div
+                  key="DELETE_SELECTED_ITEMS"
+                  onClick={() =>
+                    dispatch({
+                      type: "DELETE_SELECTED_ITEMS",
+                    })
+                  }
+                >
+                  <SvgDeleteIcon />
+                </div>,
+              ]
+            }
+            default:
+              return children
+          }
+        }
       )}
     </div>
   )

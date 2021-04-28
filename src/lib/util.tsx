@@ -2,6 +2,7 @@ import { Ord } from "fp-ts/number"
 import { clamp as fptsClamp } from "fp-ts/Ord"
 import { parseUrl } from "query-string"
 import { ReactNode, Suspense } from "react"
+import { CanvasItemT } from "types/canvas"
 import { Vector2 } from "types/geometry"
 import { UnsplashPhotoT } from "types/unsplash"
 import * as z from "zod"
@@ -62,3 +63,6 @@ export const vectorAdd = ([x0, y0]: Vector2, [x1, y1]: Vector2): Vector2 => [
   x0 + x1,
   y0 + y1,
 ]
+
+export const zSort = (items: CanvasItemT[]) =>
+  items.sort((a, b) => (a?.z ?? 0) - (b?.z ?? 0))

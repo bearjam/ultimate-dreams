@@ -1,11 +1,13 @@
 import { withUndoableReducer } from "@bearjam/tom"
 import { filter } from "fp-ts/ReadonlyArray"
-import produce from "immer"
+import produce, { Draft } from "immer"
 import executeCrop from "lib/crop"
 import create from "zustand"
 import { persist } from "zustand/middleware"
 import { CanvasAction, CanvasItemT, CanvasState } from "../../types/canvas"
 import localForage from "localforage"
+import { zSort } from "lib/util"
+import { pipe } from "fp-ts/function"
 
 const initialState: CanvasState = {
   mode: "SELECT",
@@ -32,9 +34,28 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         }
       })
     case "SELECT_ITEM":
-      return produce(state, (draft) => {
-        draft.selectedItems = [action.payload.itemId]
-      })
+      // export const zPop = (draft: Draft<StateT>, topItem: ItemT) => {
+      // }
+
+      return pipe(
+        state,
+        produce((draft) => {
+          draft.selectedItems = [action.payload.itemId]
+        }),
+        produce((draft: Draft<CanvasState>) => {
+          const i = draft.items.findIndex(
+            (item) => item.id === action.payload.itemId
+          )
+          if (i !== -1) {
+            let j = draft.items.length
+            draft.items[i].z = j--
+            draft.items.forEach((item, ii) => {
+              if (ii === i) return
+              item.z = j--
+            })
+          }
+        })
+      )
     case "UPDATE_CANVAS":
       return {
         ...state,
@@ -67,20 +88,13 @@ const reducer = (state: CanvasState, action: CanvasAction): CanvasState => {
         items: [...state.items, action.payload],
         selectedItems: [action.payload.id],
       }
-    case "DELETE_ITEM":
-      return {
-        ...state,
-        selectedItems: [
-          ...filter<string>((id) => id !== action.payload.id)(
-            state.selectedItems
-          ),
-        ],
-        items: [
-          ...filter<CanvasItemT>((item) => item.id !== action.payload.id)(
-            state.items
-          ),
-        ],
-      }
+    case "DELETE_SELECTED_ITEMS":
+      return produce(state, (draft) => {
+        draft.items = draft.items.filter(
+          (item) => !draft.selectedItems.includes(item.id)
+        )
+        draft.selectedItems = []
+      })
     case "DELETE_ALL_ITEMS":
       return {
         ...state,

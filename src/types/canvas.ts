@@ -41,11 +41,8 @@ export type InsertCanvasItemAction = {
   payload: CanvasItemT
 }
 
-export type DeleteCanvasItemAction = {
-  type: "DELETE_ITEM"
-  payload: {
-    id: string
-  }
+export type DeleteSelectedItemsAction = {
+  type: "DELETE_SELECTED_ITEMS"
 }
 
 export type DeleteAllCanvasItemsAction = {
@@ -113,7 +110,7 @@ export type CropCanvasImageItemAction = {
 
 export type CanvasAction =
   | InsertCanvasItemAction
-  | DeleteCanvasItemAction
+  | DeleteSelectedItemsAction
   | DeleteAllCanvasItemsAction
   | UpdateCanvasAction
   | MoveCanvasItemAction

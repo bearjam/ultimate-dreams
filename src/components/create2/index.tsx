@@ -6,8 +6,6 @@ import TransformTools from "./TransformTools"
 import { useCanvasStore } from "stores/canvas"
 
 const Create2 = () => {
-  const selectedItems = useCanvasStore((store) => store.state.selectedItems)
-  useEffect(() => void console.log(selectedItems), [selectedItems])
   return (
     <div className={css.canvasContainer}>
       <FiberCanvas orthographic>

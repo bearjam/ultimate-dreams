@@ -13,18 +13,11 @@ export type CanvasProps = {
 }
 
 const CanvasCommon = () => {
-  const state = useCanvasStore(
-    ({ state: { rotate, translate, scale, selectedItems } }) => ({
-      rotate,
-      translate,
-      scale,
-      selectedItems,
-    })
-  )
-  useEffect(() => {
-    // del me
-    console.log(state.selectedItems)
-  }, [state.selectedItems])
+  const state = useCanvasStore(({ state: { rotate, translate, scale } }) => ({
+    rotate,
+    translate,
+    scale,
+  }))
   const canvasSpring = useSpring<Transforms2D>(
     () => ({
       ...state,

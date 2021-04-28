@@ -23,7 +23,9 @@ const ThreeCanvasImage = ({ item }: Props) => {
     store.state,
     store.dispatch,
   ])
-  const { width, height, src } = item
+  const { width, height, src, z = 0 } = item
+  console.log(`id: ${item.id}\tz: ${z}`)
+  const selected = state.selectedItems.includes(item.id)
   const texture = useLoader(THREE.TextureLoader, src)
 
   const [{ rotate, translate, scale, inset }, spring] = useSpring(
@@ -70,7 +72,9 @@ const ThreeCanvasImage = ({ item }: Props) => {
 
   const itemBind = useGesture(
     {
-      onPointerDown: () => {
+      onPointerDown: ({ event }) => {
+        event.stopPropagation()
+        console.log(`${item.id} pointed`)
         dispatch({ type: "SELECT_ITEM", payload: { itemId: item.id } })
       },
       ...modeGestureHandlers(),
@@ -203,7 +207,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
     <animated.mesh
       position-x={translate.to((x) => x)}
       position-y={translate.to((_x, y) => y)}
-      position-z={1}
+      position-z={z}
       scale-x={scale}
       scale-y={scale}
       scale-z={1}
@@ -218,7 +222,7 @@ const ThreeCanvasImage = ({ item }: Props) => {
         uniforms-u_inset-value-w={inset.to((_x, _y, _z, w) => w)}
         uniforms-u_edge_color-value={[0.6, 0, 0.7, 1]}
       />
-      {modeChildren()}
+      {selected && modeChildren()}
     </animated.mesh>
   )
 }
