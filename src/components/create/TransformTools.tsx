@@ -94,25 +94,6 @@ const TransformTools = () => {
           </div>
         </Fragment>
       )}
-      {}
-
-      {/* // (children) => {
-        //   switch (mode) {
-        //     case "SELECT": {
-        //       return [
-        //         ...children,
-        //       ]
-        //     }
-        //     case "CROP": {
-        //       return [
-        //         ...children,
-        //       ]
-        //     }
-        //     default:
-        //       return children
-        //   }
-        // }
-      // )} */}
     </div>
   )
 }
