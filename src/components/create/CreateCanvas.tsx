@@ -1,14 +1,26 @@
 import { pipe } from "fp-ts/function"
 import { map } from "fp-ts/ReadonlyArray"
-import { Fragment } from "react"
+import { Fragment, useEffect } from "react"
 import { useCanvasStore } from "stores/canvas"
 import ThreeCanvasImage from "./ThreeCanvasImage"
 import ThreeCanvasText from "./ThreeCanvasText"
 
 const ThreeCanvas = () => {
-  const items = useCanvasStore((store) => store.state.items)
+  const [state, dispatch] = useCanvasStore((store) => [
+    store.state,
+    store.dispatch,
+  ])
+  useEffect(() => {
+    console.log(`items.length: ${state.items.length}`)
+  }, [state.items])
+
+  useEffect(() => {
+    dispatch({
+      type: "CLEAR_CROP_INSET",
+    })
+  }, [state.selectedItems])
   const children = pipe(
-    items,
+    state.items,
     map((item) => {
       switch (item.type) {
         case "IMAGE":
